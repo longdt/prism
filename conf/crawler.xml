@@ -46,7 +46,7 @@
 	</property>	
 	<property>
 		<name>crawler.debug.mode</name>
-		<value>true</value>
+		<value>false</value>
 	</property>
 	<property>
 		<name>news.ignore.html.style.script</name>
@@ -86,7 +86,7 @@
 	</property>
 	<property>
 		<name>news.relate.train</name>
-		<value>false</value>
+		<value>true</value>
 	</property>
 	<property>
 		<name>entity.relate.fields</name>
