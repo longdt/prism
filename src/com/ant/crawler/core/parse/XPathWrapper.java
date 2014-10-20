@@ -33,6 +33,7 @@ import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.utils.NodeUtils;
 import com.ant.crawler.core.utils.PrismConstants;
 import com.ant.crawler.plugins.Wrapper;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 
 @PluginImplementation
@@ -146,59 +147,59 @@ public class XPathWrapper implements Wrapper, Configurable {
 		}
 	}
 
-//	private void refineImgNode(HTMLElementImpl imgNode, EntityBuilder entity) {
-//		String uri = imgNode.getAttribute("src");
-//		if (uri != null) {
-//			try {
-//				URL url = new URL(entity.getSourceUrl(), uri);
-//				String link = url.toString();
-//				if (downImg) {
-//					String filePath = url.getFile();
-//					int fileIdx = filePath.lastIndexOf('/');
-//					if (fileIdx != -1) {
-//						filePath = filePath.substring(fileIdx + 1);
-//					}
-//					if (filePath.contains("?")) {
-//						filePath = String.valueOf(filePath.hashCode());
-//					}
-//					
-//					filePath = PrismConstants.IMAGE_SOURCES_FOLDER + "/"
-//							+ System.currentTimeMillis() + "_" + URLDecoder.decode(filePath, "UTF-8");
-//					link = imgLinkOnSite + filePath;
-//					entity.addDownloadImg(url, filePath);
-//				}
-//
-//				imgNode.setAttribute("src", link);
-//				if (thumbnailField != null && autoThumbnail
-//						&& entity.get(thumbnailField) == null) {
-//					entity.set(thumbnailField, link);
-//				}
-//				NodeUtils.styleDescImage(imgNode);
-//			} catch (Exception e) {
-//				logger.warn("can't refine node: " + imgNode.getOuterHTML(), e);
-//			}
-//		}
-//
-//	}
-//
-//	protected void refineHyperLinkNode(HTMLElementImpl aNode, URL url) {
-//		String uri = aNode.getAttribute("href");
-//		if (uri != null) {
-//			try {
-//				aNode.setAttribute("href",
-//						NodeUtils.getURLOnSite(new URL(url, uri)));
-//			} catch (Exception e) {
-//				logger.debug("can't refine node: " + aNode.getOuterHTML(), e);
-//			}
-//		}
-//		return;
-//
-//	}
-//
-//	protected void removeScriptNode(HTMLElementImpl scriptNode) {
-//		Node parent = scriptNode.getParentNode();
-//		parent.removeChild(scriptNode);
-//	}
+	private void refineImgNode(DomElement imgNode, EntityBuilder entity) {
+		String uri = imgNode.getAttribute("src");
+		if (uri != null) {
+			try {
+				URL url = new URL(entity.getSourceUrl(), uri);
+				String link = url.toString();
+				if (downImg) {
+					String filePath = url.getFile();
+					int fileIdx = filePath.lastIndexOf('/');
+					if (fileIdx != -1) {
+						filePath = filePath.substring(fileIdx + 1);
+					}
+					if (filePath.contains("?")) {
+						filePath = String.valueOf(filePath.hashCode());
+					}
+					
+					filePath = PrismConstants.IMAGE_SOURCES_FOLDER + "/"
+							+ System.currentTimeMillis() + "_" + URLDecoder.decode(filePath, "UTF-8");
+					link = imgLinkOnSite + filePath;
+					entity.addDownloadImg(url, filePath);
+				}
+
+				imgNode.setAttribute("src", link);
+				if (thumbnailField != null && autoThumbnail
+						&& entity.get(thumbnailField) == null) {
+					entity.set(thumbnailField, link);
+				}
+				NodeUtils.styleDescImage(imgNode);
+			} catch (Exception e) {
+				logger.warn("can't refine node: " + imgNode.asXml(), e);
+			}
+		}
+
+	}
+
+	protected void refineHyperLinkNode(DomElement aNode, URL url) {
+		String uri = aNode.getAttribute("href");
+		if (uri != null) {
+			try {
+				aNode.setAttribute("href",
+						NodeUtils.getURLOnSite(new URL(url, uri)));
+			} catch (Exception e) {
+				logger.debug("can't refine node: " + aNode.asXml(), e);
+			}
+		}
+		return;
+
+	}
+
+	protected void removeScriptNode(DomElement scriptNode) {
+		Node parent = scriptNode.getParentNode();
+		parent.removeChild(scriptNode);
+	}
 
 	/**
 	 * refine a given node. the node should normalize urls inside node.
@@ -207,31 +208,31 @@ public class XPathWrapper implements Wrapper, Configurable {
 	 * @param url
 	 * @return true if node's ready to using, false if node should was ignore
 	 */
-	protected boolean refineNode(Node node, EntityBuilder entity) {
+	protected boolean refineNode(DomNode node, EntityBuilder entity) {
 		if (node.getNodeType() != Node.ELEMENT_NODE) {
 			return true;
 		}
-//		HTMLElementImpl eleNode = (HTMLElementImpl) node;
-//		URL url = entity.getSourceUrl();
-//		if (eleNode.getTagName().equalsIgnoreCase(SCRIPT_TAG)) {
-//			return false;
-//		} else if (eleNode.getTagName().equalsIgnoreCase(IMG_TAG)) {
-//			refineImgNode(eleNode, entity);
-//		} else if (eleNode.getTagName().equalsIgnoreCase(A_TAG)) {
-//			refineHyperLinkNode(eleNode, url);
-//		}
-//		NodeList nodeList = eleNode.getElementsByTagName(IMG_TAG);
-//		for (int i = 0; i < nodeList.getLength(); ++i) {
-//			refineImgNode((HTMLElementImpl) nodeList.item(i), entity);
-//		}
-//		nodeList = eleNode.getElementsByTagName(A_TAG);
-//		for (int i = 0; i < nodeList.getLength(); ++i) {
-//			refineHyperLinkNode((HTMLElementImpl) nodeList.item(i), url);
-//		}
-//		nodeList = eleNode.getElementsByTagName(SCRIPT_TAG);
-//		for (int i = 0; i < nodeList.getLength(); ++i) {
-//			removeScriptNode((HTMLElementImpl) nodeList.item(i));
-//		}
+		DomElement eleNode = (DomElement) node;
+		URL url = entity.getSourceUrl();
+		if (eleNode.getTagName().equalsIgnoreCase(SCRIPT_TAG)) {
+			return false;
+		} else if (eleNode.getTagName().equalsIgnoreCase(IMG_TAG)) {
+			refineImgNode(eleNode, entity);
+		} else if (eleNode.getTagName().equalsIgnoreCase(A_TAG)) {
+			refineHyperLinkNode(eleNode, url);
+		}
+		NodeList nodeList = eleNode.getElementsByTagName(IMG_TAG);
+		for (int i = 0; i < nodeList.getLength(); ++i) {
+			refineImgNode((DomElement) nodeList.item(i), entity);
+		}
+		nodeList = eleNode.getElementsByTagName(A_TAG);
+		for (int i = 0; i < nodeList.getLength(); ++i) {
+			refineHyperLinkNode((DomElement) nodeList.item(i), url);
+		}
+		nodeList = eleNode.getElementsByTagName(SCRIPT_TAG);
+		for (int i = 0; i < nodeList.getLength(); ++i) {
+			removeScriptNode((DomElement) nodeList.item(i));
+		}
 		return true;
 	}
 
