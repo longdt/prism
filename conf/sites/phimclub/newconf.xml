@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entityConf xsi:noNamespaceSchemaLocation="../../conf/entityconf.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backend="com.ant.crawler.core.ListSiteCrawler">
+
+	<entityFields>
+		<rssSite>
+			<mappingField rssField="description.value" entityField="summary">
+				<filter type="regexall" replace=""><![CDATA[<.*>]]></filter>
+			</mappingField>
+			<mappingField rssField="title" entityField="title">
+				<filter type="scriptall">
+					<![CDATA[entity.set("source", entity.getSourceUrl().getHost());
+					entity.set("create_date", new Date());]]>
+				</filter>
+			</mappingField>
+		</rssSite>
+		<listSite>
+			<itemXpath>//*[@id='news_home']/li</itemXpath>
+			<field xpath="div/div[1]/a[1]/@href" name="source_url">
+				<filter type="scriptone">
+					<![CDATA[
+						import org.w3c.dom.Attr;
+						doc = node.getOwnerDocument();
+						if (node instanceof Attr) {
+							doc = node.getOwnerElement().getOwnerDocument();
+						}
+						URL listSite = new URL("http://vnexpress.net/tin-tuc/phap-luat");
+						URL url = new URL(listSite, field);
+						field= url.toString();
+						entity.setSourceUrl(url); 
+						entity.set("source", url.getHost());
+						entity.set("create_date", new Date());
+					]]>
+				</filter>
+			</field>
+			<field xpath="div/div[1]/a[1]/text()" name="title"></field>
+		</listSite>
+		<detailSite>
+			<field
+				xpath="//div[@class='fck_detail width_common']" name="content"></field>
+			<field
+				xpath="//div[@class='short_intro txt_666']/text()"
+				name="summary">
+				<filter type="regexall" replace=" "><![CDATA[>.*|/]]></filter>
+			</field>
+		</detailSite>
+	</entityFields>
+	<categories mappingField="category_id">
+		<category id="1">
+			http://vnexpress.net/tin-tuc/thoi-su
+		</category>
+		<category id="13">
+		</category>
+		<category id="14">
+			http://vnexpress.net/tin-tuc/phap-luat
+		</category>
+	</categories>
+</entityConf>
