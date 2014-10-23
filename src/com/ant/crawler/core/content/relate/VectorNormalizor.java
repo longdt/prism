@@ -93,7 +93,7 @@ public class VectorNormalizor {
 
 	public VectorNormalizor(Analyzer analyzer) throws Exception {
 		excludeRegex = PrismConfiguration.getInstance().get(
-				PrismConstants.NEWS_REFINE_EXCLUDE_REGEX);
+				PrismConstants.CONTENT_REFINE_EXCLUDE_REGEX);
 		this.analyzer = analyzer;
 		vocab = new HashMap<String, Float>();
 		VocabBuilder.loadVocab(vocab);

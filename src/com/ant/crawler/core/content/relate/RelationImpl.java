@@ -29,16 +29,16 @@ public class RelationImpl implements Relationer {
 			normalizor = new VectorNormalizor();
 			vectorDAO = new VectorDocDAOImpl();
 			Configuration conf = PrismConfiguration.getInstance();
-			float bThres = conf.getFloat(PrismConstants.NEWS_BOOLEAN_SIMILAR_THRESHOLD, -1);
-			float simiThres = conf.getFloat(PrismConstants.NEWS_SIMILAR_THRESHOLD, -1);
-			float relateThres = conf.getFloat(PrismConstants.NEWS_RELATE_THRESHOLD, -1);
-			int maxNum = conf.getInt(PrismConstants.NEWS_COMPARE_NUM, Integer.MAX_VALUE);
-			maxStoreNum = conf.getInt(PrismConstants.NEWS_MAX_STORE_NUM, Integer.MAX_VALUE);
+			float bThres = conf.getFloat(PrismConstants.ENITY_RELATE_BOOLEAN_SIMILAR_THRESHOLD, -1);
+			float simiThres = conf.getFloat(PrismConstants.ENTITY_RELATE_SIMILAR_THRESHOLD, -1);
+			float relateThres = conf.getFloat(PrismConstants.ENITY_RELATE_THRESHOLD, -1);
+			int maxNum = conf.getInt(PrismConstants.ENTITY_RELATE_COMPARE_NUM, Integer.MAX_VALUE);
+			maxStoreNum = conf.getInt(PrismConstants.ENTITY_RELATE_MAX_STORE_NUM, Integer.MAX_VALUE);
 			if (simiThres == -1) {
-				throw new ConfigurationException("invalid " + PrismConstants.NEWS_SIMILAR_THRESHOLD + " configuration");
+				throw new ConfigurationException("invalid " + PrismConstants.ENTITY_RELATE_SIMILAR_THRESHOLD + " configuration");
 			}
 			if (relateThres == -1) {
-				throw new ConfigurationException("invalid " + PrismConstants.NEWS_RELATE_THRESHOLD + " configuration");
+				throw new ConfigurationException("invalid " + PrismConstants.ENITY_RELATE_THRESHOLD + " configuration");
 			}
 			comparator = new RAMSimilarityComparator(vectorDAO.getRecentVectorDocs(maxNum), maxNum, bThres, simiThres, relateThres);
 		} catch (Exception e) {

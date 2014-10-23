@@ -140,7 +140,7 @@ public class MainExecutor {
 		try {
 			jc = JAXBContext.newInstance(EntityConf.class.getPackage().getName());
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
-			File newsConf = new File(pluginDir, PrismConstants.NEWS_CONFIG_FILE);
+			File newsConf = new File(pluginDir, PrismConstants.ENTITY_CONFIG_FILE);
 			if (newsConf.isFile()) {
 				return (EntityConf) unmarshaller.unmarshal(newsConf);
 			}

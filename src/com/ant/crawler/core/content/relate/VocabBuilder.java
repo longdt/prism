@@ -67,7 +67,7 @@ public class VocabBuilder {
 		public Map<String, WordCounter> call() {
 			String content = null;
 			String excludeRegex = PrismConfiguration.getInstance().get(
-					PrismConstants.NEWS_REFINE_EXCLUDE_REGEX);
+					PrismConstants.CONTENT_REFINE_EXCLUDE_REGEX);
 			Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_33);
 			for (File f : files) {
 				content = getContentFile(f);

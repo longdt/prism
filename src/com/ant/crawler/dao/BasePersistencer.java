@@ -1,6 +1,7 @@
 package com.ant.crawler.dao;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,11 +22,33 @@ public abstract class BasePersistencer implements Persistencer {
 
 	public BasePersistencer() {
 		try {
-			boolean train = PrismConfiguration.getInstance().getBoolean(
-					PrismConstants.NEWS_RELATE_TRAIN, false);
-			relation = train ? RelationTrainer.getInstance() : RelationImpl.getInstance();
+			String relate = PrismConfiguration.getInstance().get(
+					PrismConstants.ENTITY_RELATE);
+			if (relate == null || relate.trim().isEmpty()) {
+				relation = new Relationer() {
+					private List<DocSimilar> EMPTY = new ArrayList<>();
+					@Override
+					public void sync() {
+					}
+					
+					@Override
+					public void storeCurrEntityWithID(long entityID) {
+					}
+					
+					@Override
+					public List<DocSimilar> relate(EntityBuilder entity) {
+						return EMPTY;
+					}
+					
+					@Override
+					public void close() {
+					}
+				};
+			} else {
+				relation = relate.equals("train") ? RelationTrainer.getInstance() : RelationImpl.getInstance();
+			}
 			imgSavePath = PrismConfiguration.getInstance().get(
-					PrismConstants.NEWS_DOWNLOAD_IMAGE_SAVEPATH);
+					PrismConstants.CONTENT_DOWNLOAD_IMAGE_SAVEPATH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -44,7 +44,7 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 			.getBoolean(PrismConstants.CRAWL_DEBUG_MODE, false);
 	private static final boolean useCrawlTime = PrismConfiguration
 			.getInstance().getBoolean(
-					PrismConstants.NEWS_PUBDATE_USING_CRAWLTIME, false);
+					PrismConstants.ENTITY_PUBDATE_USING_CRAWLTIME, false);
 	private Iterator<Entry<URL, Integer>> urlCatsIter;
 	private Map<URL, Integer> urlCats;
 	protected PageFetcher pageFetcher;

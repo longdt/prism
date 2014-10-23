@@ -55,13 +55,13 @@ public class XPathWrapper implements Wrapper, Configurable {
 	
 	static {
 		downImg = PrismConfiguration.getInstance().getBoolean(
-				PrismConstants.NEWS_DOWNLOAD_IMAGE, false);
+				PrismConstants.CONTENT_DOWNLOAD_IMAGE, false);
 		//test write sample file
 		if (downImg) {
 			validateImgSavePath();			
 		}
 		imgLinkOnSite = PrismConfiguration.getInstance().get(
-				PrismConstants.NEWS_DOWNLOAD_IMAGE_LINKONSITE);
+				PrismConstants.CONTENT_DOWNLOAD_IMAGE_LINKONSITE);
 	}
 
 	public XPathWrapper() {
@@ -72,8 +72,8 @@ public class XPathWrapper implements Wrapper, Configurable {
 	
 	private static void validateImgSavePath() {
 		String imgSavePath = PrismConfiguration.getInstance().get(
-				PrismConstants.NEWS_DOWNLOAD_IMAGE_SAVEPATH);
-		File savePath = new File(imgSavePath, PrismConstants.IMAGE_SOURCES_FOLDER);
+				PrismConstants.CONTENT_DOWNLOAD_IMAGE_SAVEPATH);
+		File savePath = new File(imgSavePath, PrismConstants.CONTENT_IMAGE_SOURCES_FOLDER);
 		if (!savePath.isDirectory()) {
 			if (savePath.mkdirs()) {
 				return;
@@ -105,7 +105,7 @@ public class XPathWrapper implements Wrapper, Configurable {
 		this.fields = fields;
 		initFilter();
 		autoThumbnail = PrismConfiguration.getInstance().getBoolean(
-				PrismConstants.NEWS_AUTO_THUMBNAIL, false);
+				PrismConstants.ENTITY_AUTO_THUMBNAIL, false);
 		thumbnailField = conf.get(PrismConstants.ENTITY_THUMBNAIL_FIELD);
 		fieldIndexs = new HashSet<String>(PrismConfiguration.getInstance()
 				.getStringCollection(PrismConstants.ENTITY_RELATE_FIELDS));
@@ -163,7 +163,7 @@ public class XPathWrapper implements Wrapper, Configurable {
 						filePath = String.valueOf(filePath.hashCode());
 					}
 					
-					filePath = PrismConstants.IMAGE_SOURCES_FOLDER + "/"
+					filePath = PrismConstants.CONTENT_IMAGE_SOURCES_FOLDER + "/"
 							+ System.currentTimeMillis() + "_" + URLDecoder.decode(filePath, "UTF-8");
 					link = imgLinkOnSite + filePath;
 					entity.addDownloadImg(url, filePath);
@@ -266,7 +266,7 @@ public class XPathWrapper implements Wrapper, Configurable {
 				value.toString(), entity);
 		if (result == null) {
 			return false;
-		} else if (fieldName.equals(PrismConstants.TEMP_FIELD)) {
+		} else if (fieldName.equals(PrismConstants.ENTITY_TEMP_FIELD)) {
 			return true;
 		}
 

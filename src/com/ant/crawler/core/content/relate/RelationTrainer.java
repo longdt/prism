@@ -16,7 +16,7 @@ public class RelationTrainer implements Relationer {
 	private static final Logger logger = Logger.getLogger(RelationTrainer.class);
 	private static Relationer instance = new RelationTrainer();
 	private static final List<DocSimilar> EMPTY = Collections.unmodifiableList(new ArrayList<DocSimilar>());
-	private String trainHome = PrismConstants.NEWS_TRAIN_HOME;
+	private String trainHome = PrismConstants.ENTITY_RELATE_TRAIN_HOME;
 	private final int trainNum;
 	private int counter;
 	/**
@@ -24,7 +24,7 @@ public class RelationTrainer implements Relationer {
 	 * 
 	 */
 	private RelationTrainer() {
-		trainNum = PrismConfiguration.getInstance().getInt(PrismConstants.NEWS_TRAIN_NUM, -1);
+		trainNum = PrismConfiguration.getInstance().getInt(PrismConstants.ENTITY_RELATE_TRAIN_NUM, -1);
 	}
 
 	public static Relationer getInstance() {

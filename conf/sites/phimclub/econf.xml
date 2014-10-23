@@ -27,6 +27,19 @@
 		</listSite>
 		<detailSite>
 			<field xpath="//img[@class='desc-left']/@src" name="thumbnail"></field>
+			<field xpath="//div[@class='move_info_type']/ul/li[4]/a/text()" name="tags">
+				<filter type="scriptone"><![CDATA[
+					if (field.equals("Khoa Học Viễn Tưởng")) {
+						field = "Viễn Tưởng";
+					}
+					field = field + ",";
+				]]></filter>
+				<filter type="scriptall"><![CDATA[
+					if (field.length() > 1) {
+						field = field.substring(0, field.length() - 1);
+					}
+				]]></filter>
+			</field>
 			<field
 				xpath="//div[@class='move_info_type']/*" name="description"></field>
 			<field

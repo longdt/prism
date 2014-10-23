@@ -17,7 +17,7 @@
 		<value></value>
 	</property>	
 	<property>
-		<name>news.pubdate.using.crawltime</name>
+		<name>entity.pubdate.using.crawltime</name>
 		<value>true</value>
 	</property>
 	<property>
@@ -25,23 +25,23 @@
 		<value>10</value>
 	</property>
 	<property>
-		<name>news.similar.threshold</name>
+		<name>entity.relate.similar.threshold</name>
 		<value>0.9</value>
 	</property>	
 	<property>
-		<name>news.relate.threshold</name>
+		<name>entity.relate.threshold</name>
 		<value>0.5</value>
 	</property>
 	<property>
-		<name>news.bool.similar.threshold</name>
+		<name>entity.relate.bool.similar.threshold</name>
 		<value>0.3</value>
 	</property>
 	<property>
-		<name>news.compare.num</name>
+		<name>entity.relate.compare.num</name>
 		<value>80000</value>
 	</property>	
 	<property>
-		<name>news.max.store.num</name>
+		<name>entity.relate.max.store.num</name>
 		<value>100000</value>
 	</property>	
 	<property>
@@ -49,44 +49,44 @@
 		<value>false</value>
 	</property>
 	<property>
-		<name>news.ignore.html.style.script</name>
+		<name>content.ignore.html.style.script</name>
 		<value>true</value>
 	</property>
 	<property>
-		<name>news.ignore.html.style.script.whitelist</name>
+		<name>content.ignore.html.style.script.whitelist</name>
 		<value>*</value>
 	</property>
 	<property>
-		<name>news.ignore.html.style.script.blacklist</name>
+		<name>content.ignore.html.style.script.blacklist</name>
 		<value>iframe,object,param,embed</value>
 	</property>
 	<property>
-		<name>news.img.style</name>
+		<name>content.img.style</name>
 		<value>class="storyInlinePhoto"</value>
 	</property>
 	<property>
-		<name>news.link.prefix</name>
+		<name>content.link.prefix</name>
 		<value>http://</value>
 	</property>
 	<property>
-		<name>news.auto.thumbnail</name>
+		<name>entity.auto.thumbnail</name>
 		<value>true</value>
 	</property>
 	<property>
-		<name>news.download.image</name>
+		<name>content.download.image</name>
 		<value>false</value>
 	</property>
 	<property>
-		<name>news.download.image.savepath</name>
+		<name>content.download.image.savepath</name>
 		<value>data/images</value>
 	</property>
 	<property>
-		<name>news.download.image.linkOnSite</name>
+		<name>content.download.image.linkOnSite</name>
 		<value>/media/images/article</value>
 	</property>
 	<property>
-		<name>news.relate.train</name>
-		<value>true</value>
+		<name>entity.relate</name>
+		<value>train</value>
 	</property>
 	<property>
 		<name>entity.relate.fields</name>

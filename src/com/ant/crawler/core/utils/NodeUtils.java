@@ -36,14 +36,14 @@ public class NodeUtils {
 	private static final Set<String> simpleEndTags;
 	static {
 		Configuration conf = PrismConfiguration.getInstance();
-		HREF_PREFIX = conf.get(PrismConstants.NEWS_LINK_PREFIX, "http://");
+		HREF_PREFIX = conf.get(PrismConstants.CONTENT_LINK_PREFIX, "http://");
 		IGNORE_STYPLE_SCRIPT = conf.getBoolean(
-				PrismConstants.NEWS_IGNORE_HTML_STYLE_SCRIPT, true);
-		IMG_STYLE = conf.get(PrismConstants.NEWS_IMG_STYLE, "");
+				PrismConstants.CONTENT_IGNORE_HTML_STYLE_SCRIPT, true);
+		IMG_STYLE = conf.get(PrismConstants.CONTENT_IMG_STYLE, "");
 		whileList = new HashSet<String>(
-				conf.getStringCollection(PrismConstants.NEWS_IGNORE_HTML_STYLE_SCRIPT_WHITELIST));
+				conf.getStringCollection(PrismConstants.CONTENT_IGNORE_HTML_STYLE_SCRIPT_WHITELIST));
 		blackList = new HashSet<String>(
-				conf.getStringCollection(PrismConstants.NEWS_IGNORE_HTML_STYLE_SCRIPT_BLACKLIST));
+				conf.getStringCollection(PrismConstants.CONTENT_IGNORE_HTML_STYLE_SCRIPT_BLACKLIST));
 		fullStyleAll = blackList.contains("*");
 		ignoreStyleAll = !fullStyleAll && whileList.contains("*");
 
