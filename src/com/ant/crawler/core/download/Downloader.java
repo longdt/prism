@@ -4,27 +4,27 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLDecoder;
 
 import org.apache.log4j.Logger;
 
 import com.ant.crawler.core.utils.NodeUtils;
 
-public class ImageDownloader {
-	private static final Logger logger = Logger.getLogger(ImageDownloader.class);
+public class Downloader {
+	private static final Logger logger = Logger.getLogger(Downloader.class);
 	
-	public static void download(String url, String saveFilePath) throws InterruptedException {
+	public static boolean download(String url, String saveFilePath) throws InterruptedException {
 		try {
-			download(new URL(url), saveFilePath);
+			return download(new URL(url), saveFilePath);
 		} catch (MalformedURLException e) {
 			logger.error("url: " + url + " is invalid", e);
 		}
+		return false;
 	}
 	
-	public static void download(URL url, String saveFilePath) throws InterruptedException {
+	public static boolean download(URL url, String saveFilePath) throws InterruptedException {
 		InputStream in = null;
 		OutputStream out = null;
 		try {
@@ -39,6 +39,7 @@ public class ImageDownloader {
             	}
                 out.write(buf, 0, len);
             }
+            return true;
 		} catch (Exception e) {
 			logger.error("Can't downloads image on " + url, e);
 		} finally {
@@ -57,5 +58,18 @@ public class ImageDownloader {
 				}
 			}
 		}
+		return false;
+	}
+	
+	public static String getRemoteFilename(URL url) throws IOException {
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("GET");
+		String filenameHeader = conn.getHeaderField("Content-Disposition");
+		if (filenameHeader != null && filenameHeader.startsWith("attachment; filename=\"")) {
+			return filenameHeader.substring("attachment; filename=\"".length(), filenameHeader.length());
+		}
+		String filePath = url.getFile();
+		int index = filePath.lastIndexOf('/');
+		return index == -1 ? filePath : filePath.substring(index + 1);
 	}
 }

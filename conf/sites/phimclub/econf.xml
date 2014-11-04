@@ -7,7 +7,7 @@
 		</rssSite>
 		<listSite>
 			<itemXpath>//div[@class='film']</itemXpath>
-			<field xpath="h3/a/@href" name="temp">
+			<field xpath="h3/a/@href" name="tempField">
 				<filter type="scriptone">
 					<![CDATA[
 						import com.ant.crawler.core.utils.PrismConstants;
@@ -46,6 +46,18 @@
 				xpath="//video[@id='player2']/source[@type='video/mp4']/@src" name="embed_web">
 				<filter type="scriptone"><![CDATA[
 					field = "direct*" + field;
+				]]></filter>
+			</field>
+			<field xpath="//video/track/@src" name="tempField" required="false">
+				<filter type="scriptone"><![CDATA[
+					import com.ant.crawler.core.download.Downloader;
+					if (field.isEmpty()) {
+						return;
+					}
+					
+					String subFile = "/media/thienlong/data/workspace/jee/movie/upload/subtitles/" + Downloader.getRemoteFilename(new URL(field)) + ".vtt";
+					Downloader.download(field, subFile);
+					entity.set("sub_viet_path", subFile);
 				]]></filter>
 			</field>
 		</detailSite>

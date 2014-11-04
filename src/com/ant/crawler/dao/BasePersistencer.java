@@ -11,7 +11,7 @@ import com.ant.crawler.core.content.relate.DocSimilar;
 import com.ant.crawler.core.content.relate.RelationImpl;
 import com.ant.crawler.core.content.relate.RelationTrainer;
 import com.ant.crawler.core.content.relate.Relationer;
-import com.ant.crawler.core.download.ImageDownloader;
+import com.ant.crawler.core.download.Downloader;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.utils.PrismConstants;
 
@@ -79,7 +79,7 @@ public abstract class BasePersistencer implements Persistencer {
 
 	private void downloadImgs(Map<URL, String> downloadImgs) throws InterruptedException {
 		for (Entry<URL, String> entry : downloadImgs.entrySet()) {
-			ImageDownloader.download(entry.getKey(), imgSavePath + "/" + entry.getValue());
+			Downloader.download(entry.getKey(), imgSavePath + "/" + entry.getValue());
 		}
 	}
 
