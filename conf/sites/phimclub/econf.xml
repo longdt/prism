@@ -51,12 +51,15 @@
 			<field xpath="//video/track/@src" name="tempField" required="false">
 				<filter type="scriptone"><![CDATA[
 					import com.ant.crawler.core.download.Downloader;
+					import org.apache.commons.io.FileUtils;
+					import com.solt.srt2vtt.SRTConverter;
 					if (field.isEmpty()) {
 						return;
 					}
-					
-					String subFile = "/media/thienlong/data/workspace/jee/movie/upload/subtitles/" + Downloader.getRemoteFilename(new URL(field)) + ".vtt";
-					Downloader.download(field, subFile);
+					URL subURL = new URL(field);
+					String subFile = "/media/thienlong/data/workspace/jee/movie/upload/subtitles/" + Downloader.getRemoteFilename(subURL) + ".vtt";
+					SRTConverter converter = new SRTConverter( new InputStreamReader(subURL.openStream()));
+					FileUtils.writeStringToFile(new File(subFile), converter.toVTT(false, false));
 					entity.set("sub_viet_path", subFile);
 				]]></filter>
 			</field>

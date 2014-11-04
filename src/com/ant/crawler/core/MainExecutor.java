@@ -30,6 +30,7 @@ import com.ant.crawler.core.conf.Configuration;
 import com.ant.crawler.core.conf.PrismConfiguration;
 import com.ant.crawler.core.conf.entity.EntityConf;
 import com.ant.crawler.core.parse.XPathWrapper;
+import com.ant.crawler.core.utils.ClassPathHacker;
 import com.ant.crawler.core.utils.PrismConstants;
 import com.ant.crawler.dao.Persistencer;
 import com.ant.crawler.dao.PersistencerFactory;
@@ -90,11 +91,12 @@ public class MainExecutor {
 			File[] list = pluginDir.listFiles(new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
-					return dir.isFile() && name.endsWith(".jar");
+					return name.endsWith(".jar");
 				}
 			});
 			for (File file : list) {
 				pluginManager.addPluginsFrom(file.toURI());
+				ClassPathHacker.addFile(file);
 			}
 			String backend = entityConf.getBackend();
 			if (backend == null || backend.trim().isEmpty()) {
