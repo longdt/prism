@@ -44,6 +44,7 @@
 				<filter type="scriptall"><![CDATA[
 					if (field.length() > 1) {
 						field = field.substring(0, field.length() - 1);
+						field = field.replace(",\n", ", ");
 					}
 				]]></filter>
 			</field>

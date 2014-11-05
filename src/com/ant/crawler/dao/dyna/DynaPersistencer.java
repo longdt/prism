@@ -33,7 +33,7 @@ public class DynaPersistencer extends BasePersistencer {
 	private static final Logger logger = Logger.getLogger(DynaPersistencer.class);
 	private static final String DB_CONF_FILE = "conf/database/database.properties";
 	public static final String DATASOURCE_PROPERTY_PREFIX = "datasource.";
-	private static final String ENTITY_RELATE_INSERT_SQL = PrismConfiguration.getInstance().get(PrismConstants.ENTITY_RELATE_INSERT_SQL);
+	private static final String ENTITY_RELATE_INSERT_SQL = PrismConfiguration.getInstance().get(PrismConstants.ENTITY_RELATE_INSERT_SQL, "");
 	private Platform platform;
 	private Database database;
 
@@ -93,7 +93,9 @@ public class DynaPersistencer extends BasePersistencer {
         {
         	platform.insert(connection, database, (DynaBean)entity);
         	long pk = ((Number) PropertyUtils.getProperty(entity, pkName)).longValue();
-        	insertRelate(connection, pk, relateEntities);
+        	if (!ENTITY_RELATE_INSERT_SQL.isEmpty()) {
+        		insertRelate(connection, pk, relateEntities);
+        	}
         	return pk;
         } catch (Exception e) {
 			logger.error("can't insert entity: " + entity, e);

@@ -86,15 +86,15 @@
 	</property>
 	<property>
 		<name>entity.relate</name>
-		<value>train</value>
+		<value>relate</value>
 	</property>
 	<property>
 		<name>entity.relate.fields</name>
-		<value>title,summary,content</value>
+		<value>title,description</value>
 	</property>
 	<property>
 		<name>entity.relate.insert.sql</name>
-		<value>INSERT INTO `related_articles`(`article_id`, `related_article_id`, `related_score`) VALUES (?, ?,?)</value>
+		<value></value>
 	</property>
 	<property>
 		<name>persistencer.backend</name>
