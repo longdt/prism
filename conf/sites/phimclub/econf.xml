@@ -26,8 +26,15 @@
 			<field xpath="h3/a/text()" name="title"></field>
 		</listSite>
 		<detailSite>
+			<field xpath="//div[@class='move_info_type']/ul/li[contains(., 'Năm sản xuất')]/a/text()" name="tempField" required="false">
+				<filter type="scriptone">
+					<![CDATA[
+						entity.set("title", entity.get("title") + " (" + field + ")");
+					]]>
+				</filter>
+			</field>
 			<field xpath="//img[@class='desc-left']/@src" name="thumbnail"></field>
-			<field xpath="//div[@class='move_info_type']/ul/li[4]/a/text()" name="tags">
+			<field xpath="//div[@class='move_info_type']/ul/li[contains(., 'Thể loại')]/a/text()" name="tags"  required="false">
 				<filter type="scriptone"><![CDATA[
 					if (field.equals("Khoa Học Viễn Tưởng")) {
 						field = "Viễn Tưởng";
@@ -45,10 +52,14 @@
 			<field
 				xpath="//video[@id='player2']/source[@type='video/mp4']/@src" name="embed_web">
 				<filter type="scriptone"><![CDATA[
+					import com.ant.crawler.core.download.Downloader;
+					if (!Downloader.isGreaterLength(new URL(field), 52428800)) {
+						field = null;
+					}
 					field = "direct*" + field;
 				]]></filter>
 			</field>
-			<field xpath="//video/track/@src" name="tempField" required="false">
+			<field xpath="//video/track/@src" name="tempField1" required="false">
 				<filter type="scriptone"><![CDATA[
 					import com.ant.crawler.core.download.Downloader;
 					import org.apache.commons.io.FileUtils;

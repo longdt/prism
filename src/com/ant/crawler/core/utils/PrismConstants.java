@@ -8,7 +8,7 @@ public class PrismConstants {
 	
 	public static final String PERSISTENCER_BACKEND = "persistencer.backend";
 	
-	public static final String ENTITY_TEMP_FIELD = "tempField";
+	public static final String ENTITY_TEMP_FIELD = "temp";
 	
 	public static final String PLUGIN_HOME_DIR = "conf/sites";
 

@@ -266,7 +266,7 @@ public class XPathWrapper implements Wrapper, Configurable {
 				value.toString(), entity);
 		if (result == null) {
 			return false;
-		} else if (fieldName.equals(PrismConstants.ENTITY_TEMP_FIELD)) {
+		} else if (fieldName.startsWith(PrismConstants.ENTITY_TEMP_FIELD)) {
 			return true;
 		}
 

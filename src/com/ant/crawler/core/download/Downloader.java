@@ -65,11 +65,20 @@ public class Downloader {
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("GET");
 		String filenameHeader = conn.getHeaderField("Content-Disposition");
+		conn.disconnect();
 		if (filenameHeader != null && filenameHeader.startsWith("attachment; filename=\"")) {
 			return filenameHeader.substring("attachment; filename=\"".length(), filenameHeader.length());
 		}
 		String filePath = url.getFile();
 		int index = filePath.lastIndexOf('/');
 		return index == -1 ? filePath : filePath.substring(index + 1);
+	}
+	
+	public static boolean isGreaterLength(URL url, long contentLength) throws IOException {
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("GET");
+		long length = conn.getContentLengthLong();
+		conn.disconnect();
+		return length > contentLength;
 	}
 }
