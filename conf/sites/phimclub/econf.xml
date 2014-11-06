@@ -23,13 +23,16 @@
 					]]>
 				</filter>
 			</field>
-			<field xpath="h3/a/text()" name="title"></field>
 		</listSite>
 		<detailSite>
+			<field xpath="//h2[@class='title_film']/text()" name="title"></field>
 			<field xpath="//div[@class='move_info_type']/ul/li[contains(., 'Năm sản xuất')]/a/text()" name="tempField" required="false">
 				<filter type="scriptone">
 					<![CDATA[
-						entity.set("title", entity.get("title") + " (" + field + ")");
+						String title = entity.get("title");
+						if (!title.contains(field)) {
+							entity.set("title", title  + " (" + field + ")");
+						}
 					]]>
 				</filter>
 			</field>
@@ -64,14 +67,14 @@
 				<filter type="scriptone"><![CDATA[
 					import com.ant.crawler.core.download.Downloader;
 					import org.apache.commons.io.FileUtils;
-					import com.solt.srt2vtt.SRTConverter;
+					import com.solt.vttconverter.VTTConverter;
 					if (field.isEmpty()) {
 						return;
 					}
 					URL subURL = new URL(field);
 					String subFile = "/media/thienlong/data/workspace/jee/movie/upload/subtitles/" + Downloader.getRemoteFilename(subURL) + ".vtt";
-					SRTConverter converter = new SRTConverter( new InputStreamReader(subURL.openStream()));
-					FileUtils.writeStringToFile(new File(subFile), converter.toVTT(false, false));
+					String vtt = VTTConverter.tryConvert( new InputStreamReader(subURL.openStream()), false,false);
+					FileUtils.writeStringToFile(new File(subFile), vtt);
 					entity.set("sub_viet_path", subFile);
 				]]></filter>
 			</field>
@@ -79,7 +82,7 @@
 	</entityFields>
 	<categories mappingField="category_id">
 		<category id="1">
-			http://phimclub.net/category/phim-le_id93
+			http://phimclub.net/category/phim-le_id93?page=48
 		</category>
 	</categories>
 </entityConf>

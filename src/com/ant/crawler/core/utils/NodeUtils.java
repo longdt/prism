@@ -36,7 +36,7 @@ public class NodeUtils {
 	private static final Set<String> simpleEndTags;
 	static {
 		Configuration conf = PrismConfiguration.getInstance();
-		HREF_PREFIX = conf.get(PrismConstants.CONTENT_LINK_PREFIX, "http://");
+		HREF_PREFIX = conf.get(PrismConstants.CONTENT_LINK_PREFIX);
 		IGNORE_STYPLE_SCRIPT = conf.getBoolean(
 				PrismConstants.CONTENT_IGNORE_HTML_STYLE_SCRIPT, true);
 		IMG_STYLE = conf.get(PrismConstants.CONTENT_IMG_STYLE, "");
@@ -195,6 +195,9 @@ public class NodeUtils {
 //	}
 
 	public static String getURLOnSite(URL u) {
+		if (HREF_PREFIX == null) {
+			return "";
+		}
 		int len = HREF_PREFIX.length();
 		if (u.getAuthority() != null && u.getAuthority().length() > 0)
 			len += 2 + u.getAuthority().length();

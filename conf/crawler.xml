@@ -64,10 +64,10 @@
 		<name>content.img.style</name>
 		<value>class="storyInlinePhoto"</value>
 	</property>
-	<property>
+<!-- 	<property>
 		<name>content.link.prefix</name>
 		<value>http://</value>
-	</property>
+	</property> -->
 	<property>
 		<name>entity.auto.thumbnail</name>
 		<value>true</value>
