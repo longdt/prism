@@ -59,8 +59,9 @@
 					import com.ant.crawler.core.download.Downloader;
 					if (!Downloader.isGreaterLength(new URL(field), 52428800)) {
 						field = null;
+					} else {
+						field = "direct*" + field;
 					}
-					field = "direct*" + field;
 				]]></filter>
 			</field>
 			<field xpath="//video/track/@src" name="tempField1" required="false">
@@ -82,7 +83,15 @@
 	</entityFields>
 	<categories mappingField="category_id">
 		<category id="1">
-			http://phimclub.net/category/phim-le_id93?page=48
+			http://phimclub.net/category/phim-le_id93?page=1
+			http://phimclub.net/category/phim-le_id93?page=2
+			http://phimclub.net/category/phim-le_id93?page=3
+			http://phimclub.net/category/phim-le_id93?page=4
+			http://phimclub.net/category/phim-le_id93?page=5
+			http://phimclub.net/category/phim-le_id93?page=6
+			http://phimclub.net/category/phim-le_id93?page=7
+			http://phimclub.net/category/phim-le_id93?page=8
+			http://phimclub.net/category/phim-le_id93?page=9
 		</category>
 	</categories>
 </entityConf>
