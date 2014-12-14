@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entityConf xsi:noNamespaceSchemaLocation="../../conf/entityconf.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backend="com.ant.crawler.core.ListSiteCrawler">
+
+	<entityFields>
+		<rssSite>
+		</rssSite>
+		<listSite>
+			<itemXpath>//div[@class='list-flim']/div[@class='bg-list-flim']/ul/li</itemXpath>
+			<field xpath="div[@class='flim-01 list_m']/div[@class='name-flim']/a/@href" name="tempField">
+				<filter type="scriptone">
+					<![CDATA[
+						import com.ant.crawler.core.utils.PrismConstants;
+						URL listSite = new URL(conf.get(PrismConstants.PLUGIN_HOME_SITE));
+						URL url = new URL(listSite, field);
+						field= url.toString();
+						entity.setSourceUrl(url); 
+						entity.set("source", url.getHost());
+						entity.set("create_date", new Date());
+						entity.set("owner_email", "tronglongcntt@gmail.com");
+						entity.set("parrent", 0);
+						entity.set("view", 10);
+					]]>
+				</filter>
+			</field>
+			<field xpath="div[@class='flim-01 list_m']/div[@class='name-flim']/a/text()" name="title"></field>
+			<field xpath="div[@class='flim-01 list_m']/div[@class='img-flim']/h3/a/img/@src" name="thumbnail"></field>
+		</listSite>
+		<detailSite>
+			
+			<field xpath="//div[@class='move_info_type']/ul/li[contains(., 'Thể loại')]/a/text()" name="tags"  required="false">
+				<filter type="scriptone"><![CDATA[
+					if (field.equals("Khoa Học Viễn Tưởng")) {
+						field = "Viễn Tưởng";
+					}
+					field = field + ",";
+				]]></filter>
+				<filter type="scriptall"><![CDATA[
+					if (field.length() > 1) {
+						field = field.substring(0, field.length() - 1);
+						field = field.replace(",\n", ", ");
+					}
+				]]></filter>
+			</field>
+			<field
+				xpath="//div[@class='info_detail']/*" name="description" required="false"></field>
+				
+			<field
+				xpath="//div[@class='fiml-img']/a[@class='btn-trailer']/@href" name="embed_web">
+				<filter type="scriptone"><![CDATA[
+					import com.ant.crawler.core.download.Downloader;
+					import org.apache.commons.io.IOUtils;
+					import org.apache.commons.io.FileUtils;
+					import com.solt.vttconverter.VTTConverter;
+					
+					String pageContent = IOUtils.toString(new URL(field));
+					String moviePrefix = "<a _episode=\"1\" _link=\"";
+					int movieIdx = pageContent.indexOf(moviePrefix);
+					if (movieIdx == -1) {
+						field = null;
+						return;
+					}
+					movieIdx += moviePrefix.length();
+					int movieEnd = pageContent.indexOf("\"", movieIdx);
+					field = pageContent.substring(movieIdx, movieEnd).replace("_FREE", "");
+					if (!Downloader.isGreaterLength(new URL(field), 52428800)) {
+						field = null;
+					} else {
+						field = "direct*" + field;
+					}
+					
+					//subtitle
+					String subPrefix = "_sub=\"";
+					int subIdx = pageContent.indexOf(subPrefix, movieIdx);
+					if (subIdx == -1) {
+						return;
+					}
+					subIdx += subPrefix.length();
+					int subEnd = pageContent.indexOf("\"", subIdx);
+					URL subURL = new URL(pageContent.substring(subIdx, subEnd));
+					String subFile = "/media/thienlong/data/workspace/jee/movie/upload/subtitles/" + Downloader.getRemoteFilename(subURL) + ".vtt";
+					String vtt = VTTConverter.tryConvert( new InputStreamReader(subURL.openStream()), false,false);
+					FileUtils.writeStringToFile(new File(subFile), vtt);
+					entity.set("sub_viet_path", subFile);
+				]]></filter>
+			</field>
+		</detailSite>
+	</entityFields>
+	<categories mappingField="category_id">
+		<category id="1">
+			http://vuiphim.tv/movie/movies.html
+		</category>
+	</categories>
+</entityConf>
