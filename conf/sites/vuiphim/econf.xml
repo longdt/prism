@@ -27,21 +27,6 @@
 			<field xpath="div[@class='flim-01 list_m']/div[@class='img-flim']/h3/a/img/@src" name="thumbnail"></field>
 		</listSite>
 		<detailSite>
-			
-			<field xpath="//div[@class='move_info_type']/ul/li[contains(., 'Thể loại')]/a/text()" name="tags"  required="false">
-				<filter type="scriptone"><![CDATA[
-					if (field.equals("Khoa Học Viễn Tưởng")) {
-						field = "Viễn Tưởng";
-					}
-					field = field + ",";
-				]]></filter>
-				<filter type="scriptall"><![CDATA[
-					if (field.length() > 1) {
-						field = field.substring(0, field.length() - 1);
-						field = field.replace(",\n", ", ");
-					}
-				]]></filter>
-			</field>
 			<field
 				xpath="//div[@class='info_detail']/*" name="description" required="false"></field>
 				
@@ -52,6 +37,7 @@
 					import org.apache.commons.io.IOUtils;
 					import org.apache.commons.io.FileUtils;
 					import com.solt.vttconverter.VTTConverter;
+					import com.ant.crawler.core.utils.StringUtils;
 					
 					String pageContent = IOUtils.toString(new URL(field));
 					String moviePrefix = "<a _episode=\"1\" _link=\"";
@@ -79,9 +65,29 @@
 					int subEnd = pageContent.indexOf("\"", subIdx);
 					URL subURL = new URL(pageContent.substring(subIdx, subEnd));
 					String subFile = "/media/thienlong/data/workspace/jee/movie/upload/subtitles/" + Downloader.getRemoteFilename(subURL) + ".vtt";
-					String vtt = VTTConverter.tryConvert( new InputStreamReader(subURL.openStream()), false,false);
+					String subContent = StringUtils.toString(subURL);
+					String vtt = VTTConverter.tryConvert(subContent, false, false);
 					FileUtils.writeStringToFile(new File(subFile), vtt);
 					entity.set("sub_viet_path", subFile);
+				]]></filter>
+			</field>
+			
+			<field xpath="//div[@class='box-info']/div[@class='publish']/a[position() > 1]/text()" name="tags"  required="false">
+				<filter type="scriptone"><![CDATA[
+					String[] tags = field.split("-");
+					if (tags.length == 0) {
+						return;
+					}
+					field = tags[0].trim() + ",";
+					for (int i = 1; i < tags.length; ++i) {
+						field = field + "\n" + tags[i].trim() + ",";
+					}
+				]]></filter>
+				<filter type="scriptall"><![CDATA[
+					if (field.length() > 1) {
+						field = field.substring(0, field.length() - 1);
+						field = field.replace(",\n", ", ");
+					}
 				]]></filter>
 			</field>
 		</detailSite>
@@ -89,6 +95,8 @@
 	<categories mappingField="category_id">
 		<category id="1">
 			http://vuiphim.tv/movie/movies.html
+			http://vuiphim.tv/movie/movies.html?per_page=35
+			http://vuiphim.tv/movie/movies.html?per_page=70
 		</category>
 	</categories>
 </entityConf>

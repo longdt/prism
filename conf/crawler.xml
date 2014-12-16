@@ -6,11 +6,11 @@
 <configuration>
 	<property>
 		<name>crawler.cycle.millistime</name>
-		<value>100000</value>
+		<value>600000</value>
 	</property>
 	<property>
 		<name>crawler.plugin.whitelist</name>
-		<value>phimclub</value>
+		<value>vuiphim</value>
 	</property>
 	<property>
 		<name>crawler.plugin.blacklist</name>

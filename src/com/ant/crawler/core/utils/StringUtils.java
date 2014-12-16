@@ -18,11 +18,15 @@
 
 package com.ant.crawler.core.utils;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -33,6 +37,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
+
+import org.apache.commons.io.IOUtils;
+import org.mozilla.universalchardet.UniversalDetector;
 
 
 /**
@@ -716,4 +723,27 @@ public class StringUtils {
 
     return sb.toString();
   }
+  
+  	public static String detectEncoding(InputStream in) throws IOException {
+		byte[] buf = new byte[4096];
+	    UniversalDetector detector = new UniversalDetector(null);
+	    int nread = 0;
+	    while ((nread = in.read(buf)) > 0 && !detector.isDone()) {
+	      detector.handleData(buf, 0, nread);
+	    }
+	    detector.dataEnd();
+	    return detector.getDetectedCharset();
+  	}
+  	
+  	public static String toString(URL url) throws IOException {
+  		try(BufferedInputStream in = new BufferedInputStream(url.openStream())) {
+  			in.mark(1 << 32);
+  			String encoding = detectEncoding(in);
+  			in.reset();
+  			if (encoding == null) {
+  				encoding = "UTF-8";
+  			}
+  			return IOUtils.toString(in, encoding);
+  		}
+  	}
 }

@@ -146,6 +146,13 @@
 			<systemPath>${project.basedir}/lib/ddlutils-1.1.jar</systemPath>
 		</dependency>
 		<dependency>
+			<groupId>juniversalchardet-</groupId>
+			<artifactId>juniversalchardet-</artifactId>
+			<version>1.0.3</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/juniversalchardet-1.0.3.jar</systemPath>
+		</dependency>
+		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
