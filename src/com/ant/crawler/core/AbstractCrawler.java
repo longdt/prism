@@ -13,6 +13,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -70,6 +71,9 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 	@Override
 	public void init(EntityConf entityConf, Wrapper wrapper,
 			Persistencer persistencer) throws PluginException {
+		if (conf != null) {
+			pageFetcher.init(conf);
+		}
 		this.entityConf = entityConf;
 		this.detailWrapper = wrapper;
 		this.persistencer = persistencer;
@@ -122,7 +126,7 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 	}
 
 	private Map<URL, Integer> parseUrlCats(List<Category> cats) {
-		Map<URL, Integer> urlCats = new HashMap<URL, Integer>();
+		Map<URL, Integer> urlCats = new LinkedHashMap<URL, Integer>();
 		String[] urls = null;
 		int catId = 0;
 		for (Category cat : cats) {

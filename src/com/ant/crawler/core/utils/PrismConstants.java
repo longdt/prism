@@ -42,6 +42,10 @@ public class PrismConstants {
 	
 	public static final int THREAD_NUM_DEFAULT = 4;
 	
+	public static final String WEBCLIENT_JAVASCRIPT_ENABLED = "webclient.enableJavascript";
+	
+	public static final String WEBCLIENT_COOKIES = "webclient.cookies";
+	
 	@Deprecated
 	public static final String SQL_QUERY = "sql.query";
 	

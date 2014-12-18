@@ -86,7 +86,7 @@
 	</property>
 	<property>
 		<name>entity.relate</name>
-		<value>relate</value>
+		<value></value>
 	</property>
 	<property>
 		<name>entity.relate.fields</name>
@@ -99,5 +99,9 @@
 	<property>
 		<name>persistencer.backend</name>
 		<value>dyna</value>
+	</property>
+	<property>
+		<name>webclient.enableJavascript</name>
+		<value>false</value>
 	</property>
 </configuration> 

@@ -16,4 +16,10 @@
 		<name>entity.thumbnail.field</name>
 		<value>thumbnail</value>
 	</property>
+	<property>
+		<name>webclient.cookies</name>
+		<value>
+			Set-Cookie: lang_id=2; Domain=vuiphim.tv; Path=/; Expires=Thu, 17 Dec 2016 14:53:51 GMT
+		</value>
+	</property>
 </configuration>
