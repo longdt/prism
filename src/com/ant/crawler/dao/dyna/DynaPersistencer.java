@@ -41,7 +41,7 @@ public class DynaPersistencer extends BasePersistencer {
 		Properties props = loadConf();
 		DataSource dataSource = initDataSource(props);
 		platform = PlatformFactory.createNewPlatformInstance(dataSource);
-		database = platform.readModelFromDatabase("testDatabase");
+		database = platform.readModelFromDatabase(null);
 	}
 
 	private DataSource initDataSource(Properties props) {

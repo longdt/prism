@@ -22,14 +22,12 @@ public class FSSimilarityComparator extends AbstractSimilarityComparator {
 	 * core.similar.VectorDoc)
 	 */
 	@Override
-	public List<DocSimilar> similar(VectorDoc vector) throws InterruptedException {
+	public List<DocSimilar> similar(VectorDoc vector) throws Exception {
 		Map<String, Float> vectorW = vector.getVectorWeight();
 		List<DocSimilar> relateNews = new ArrayList<DocSimilar>();
 		float cosAngel = 0;
 		int bSize = vector.getVectorBool().cardinality();
-		VectorDocIterator iterator = null;
-		try {
-			iterator = vectorDao.getIterator();
+		try (VectorDocIterator iterator = vectorDao.getIterator()) {
 			VectorDoc element = null;
 			while ((element = iterator.next()) != null) {
             	if (Thread.interrupted()) {
@@ -47,8 +45,6 @@ public class FSSimilarityComparator extends AbstractSimilarityComparator {
 					}
 				}
 			}
-		} finally {
-			iterator.close();
 		}
 		return relateNews;
 	}
