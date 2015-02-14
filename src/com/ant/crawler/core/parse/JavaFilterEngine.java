@@ -8,13 +8,13 @@ import bsh.Interpreter;
 import com.ant.crawler.core.conf.Configuration;
 import com.ant.crawler.core.entity.EntityBuilder;
 
-public class ScriptFilterEngine implements FilterEngine {
+public class JavaFilterEngine implements FilterEngine {
 	private Interpreter interpreter = new Interpreter();
 	private Configuration conf;
 	private String expresion;
 	private String replace;
 	
-	public ScriptFilterEngine(Configuration conf) {
+	public JavaFilterEngine(Configuration conf) {
 		this.conf = conf;
 	}
 

@@ -116,6 +116,7 @@ public class XPathWrapper implements Wrapper, Configurable {
 		List<FilterEngine> one = null;
 		List<FilterEngine> all = null;
 		FilterEngine engine = null;
+		String filterType = null;
 		for (Field field : fields) {
 			filters = field.getFilter();
 			one = filterOne.get(field.getName());
@@ -129,18 +130,34 @@ public class XPathWrapper implements Wrapper, Configurable {
 				filterAll.put(field.getName(), all);
 			}
 			for (Filter filter : filters) {
-				if (filter.getType().equals("regexone")) {
+				filterType = filter.getType();
+				switch (filterType) {
+				case "regexone":
 					engine = new RegexFilterEngine();
 					one.add(engine);
-				} else if (filter.getType().equals("scriptone")) {
-					engine = new ScriptFilterEngine(conf);
+					break;
+				case "jsone":
+					engine = new JSFilterEngine(conf);
 					one.add(engine);
-				} else if (filter.getType().equals("regexall")) {
+					break;
+				case "javaone":
+					engine = new JavaFilterEngine(conf);
+					one.add(engine);
+					break;
+				case "regexall":
 					engine = new RegexFilterEngine();
 					all.add(engine);
-				} else if (filter.getType().equals("scriptall")) {
-					engine = new ScriptFilterEngine(conf);
+					break;
+				case "jsall":
+					engine = new JSFilterEngine(conf);
 					all.add(engine);
+					break;
+				case "javaall":
+					engine = new JavaFilterEngine(conf);
+					all.add(engine);
+					break;
+				default:
+					continue;
 				}
 				engine.init(filter.getValue(), filter.getReplace());
 			}

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entityConf xsi:noNamespaceSchemaLocation="../../conf/entityconf.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backend="com.ant.crawler.core.ListSiteCrawler">
+
+	<entityFields>
+		<rssSite>
+		</rssSite>
+		<listSite>
+			<itemXpath>//div[@itemtype='http://schema.org/Movie']</itemXpath>
+			<field xpath="table/tbody/tr[1]/td[2]/h4/a/@href" name="tempField">
+				<filter type="javaone">
+					<![CDATA[
+						import com.ant.crawler.core.utils.PrismConstants;
+						URL listSite = new URL(conf.get(PrismConstants.PLUGIN_HOME_SITE));
+						URL url = new URL(listSite, field);
+						field= url.toString();
+						entity.setSourceUrl(url);
+						entity.set("_mt", new Date());
+						if (field.startsWith("http://www.imdb.com/title/tt")) {
+							int index = "http://www.imdb.com/title/tt".length();
+							int end = field.indexOf('/', index);
+							if (end == -1) {
+								end = field.length();
+							}
+							int imdbCode = Integer.parseInt(field.substring(index, end));
+							entity.set("imdb_code", imdbCode);
+						}
+					]]>
+				</filter>
+			</field>
+			<field xpath="table/tbody/tr[1]/td[2]/h4/a/text()" name="title"></field>
+			<field xpath="table/tbody/tr[1]/td[1]/div/a/div/img/@src" name="cover_image"></field>
+		</listSite>
+		<detailSite>
+			<field
+				xpath="//p[@itemprop='description'] | //div[@itemprop='description']/p" name="description" required="false"></field>
+			
+			<field xpath="//div[@class='infobar']/a/span/text()" name="genre"  required="false">
+				<filter type="javaone"><![CDATA[
+					String[] tags = field.split("-");
+					if (tags.length == 0) {
+						return;
+					}
+					field = tags[0].trim() + ",";
+					for (int i = 1; i < tags.length; ++i) {
+						field = field + "\n" + tags[i].trim() + ",";
+					}
+				]]></filter>
+				<filter type="javaall"><![CDATA[
+					if (field.length() > 1) {
+						field = field.substring(0, field.length() - 1);
+						field = field.replace(",\n", ", ");
+					}
+				]]></filter>
+			</field>
+			<field xpath="//h1[@class='header']/span[@class='nobr']/a/text()" name="published_year"></field>
+			<field xpath="//div[@class='star-box giga-star']/div[@class='titlePageSprite star-box-giga-star']/text()" name="imdb_score">
+				<filter type="javaall">
+					<![CDATA[
+					field = field.trim();
+				]]>
+				</filter>
+			</field>
+			<field xpath="//div[@class='txt-block']/span[@itemprop='contentRating']/text()" name="age_rating">				
+				<filter type="javaall">
+					<![CDATA[
+					String prefix = "Rated ";
+					if (field.startsWith(prefix)) {
+						int index = prefix.length();
+						int end = field.indexOf(' ', index);
+						if (end == -1) {
+							end = field.length();
+						}
+						field = field.substring(index, end);
+					}
+					]]>
+				</filter>
+			</field>
+		</detailSite>
+	</entityFields>
+	<categories mappingField="category_id">
+		<category id="1">
+			http://www.imdb.com/movies-in-theaters/?ref_=inth_inth
+		</category>
+	</categories>
+</entityConf>

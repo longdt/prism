@@ -24,8 +24,9 @@ import com.ant.crawler.core.conf.entity.Filter;
 import com.ant.crawler.core.conf.entity.MappingField;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.parse.FilterEngine;
+import com.ant.crawler.core.parse.JSFilterEngine;
 import com.ant.crawler.core.parse.RegexFilterEngine;
-import com.ant.crawler.core.parse.ScriptFilterEngine;
+import com.ant.crawler.core.parse.JavaFilterEngine;
 import com.ant.crawler.core.parse.XPathWrapper;
 import com.ant.crawler.dao.Persistencer;
 import com.ant.crawler.plugins.PluginException;
@@ -54,6 +55,7 @@ public class SimpleRssCrawler extends AbstractRssCrawler {
 		List<Filter> filters = null;
 		List<FilterEngine> filterEngines = null;
 		FilterEngine engine = null;
+		String filterType = null;
 		for (MappingField field : fields) {
 			filters = field.getFilter();
 			filterEngines = filterAll.get(field.getEntityField());
@@ -62,12 +64,22 @@ public class SimpleRssCrawler extends AbstractRssCrawler {
 				filterAll.put(field.getEntityField(), filterEngines);
 			}
 			for (Filter filter : filters) {
-				if (filter.getType().equals("regexall")) {
+				filterType = filter.getType();
+				switch (filterType) {
+				case "regexall":
 					engine = new RegexFilterEngine();
 					filterEngines.add(engine);
-				} else if (filter.getType().equals("scriptall")) {
-					engine = new ScriptFilterEngine(conf);
+					break;
+				case "jsall":
+					engine = new JSFilterEngine(conf);
 					filterEngines.add(engine);
+					break;
+				case "javaall":
+					engine = new JavaFilterEngine(conf);
+					filterEngines.add(engine);
+					break;
+				default:
+					continue;
 				}
 				engine.init(filter.getValue(), filter.getReplace());
 			}

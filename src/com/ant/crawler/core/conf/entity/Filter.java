@@ -27,8 +27,10 @@ import javax.xml.bind.annotation.XmlValue;
  *       &lt;attribute name="type" use="required">
  *         &lt;simpleType>
  *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *             &lt;enumeration value="scriptone"/>
- *             &lt;enumeration value="scriptall"/>
+ *             &lt;enumeration value="jsone"/>
+ *             &lt;enumeration value="jsall"/>
+ *             &lt;enumeration value="javaone"/>
+ *             &lt;enumeration value="javaall"/>
  *             &lt;enumeration value="regexone"/>
  *             &lt;enumeration value="regexall"/>
  *           &lt;/restriction>
