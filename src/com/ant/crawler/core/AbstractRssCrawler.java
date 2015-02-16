@@ -13,6 +13,7 @@ import com.rometools.rome.feed.synd.SyndFeed;
 public abstract class AbstractRssCrawler extends AbstractCrawler {
 	protected FeedReader fetcher;
 	protected SyndFeed currentFeed;
+	protected URL currSourceUrl;
 	protected Integer currCat;
 	protected int index;
 
@@ -26,6 +27,7 @@ public abstract class AbstractRssCrawler extends AbstractCrawler {
 			Iterator<Entry<URL, Integer>> urlCatsIter) throws NoSuchElementException {
 		if (currentFeed == null || index == -1) {
 			Entry<URL, Integer> urlEntry = urlCatsIter.next();
+			currSourceUrl = urlEntry.getKey();
 			currCat = urlEntry.getValue();
 			currentFeed = fetcher.retrieveFeed(urlEntry.getKey());
 			if (currentFeed == null || currentFeed.getEntries().size() == 0) {
@@ -34,6 +36,7 @@ public abstract class AbstractRssCrawler extends AbstractCrawler {
 			index = currentFeed.getEntries().size() - 1;
 		}
 		try {
+			entity.setSourceUrl(currSourceUrl);
 			entity.set(categoryFieldName, currCat);
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block

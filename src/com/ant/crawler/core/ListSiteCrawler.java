@@ -24,6 +24,7 @@ import com.gargoylesoftware.htmlunit.html.DomNode;
 @PluginImplementation
 public class ListSiteCrawler extends AbstractCrawler {
 	protected XPath xpath = XPathFactory.newInstance().newXPath();
+	protected URL currSourceUrl;
 	protected Integer currCat;
 	protected int index = -1;
 	protected List<DomNode> currentList;
@@ -48,6 +49,7 @@ public class ListSiteCrawler extends AbstractCrawler {
 			throws NoSuchElementException {
 		if (currentList == null || index == -1) {
 			Entry<URL, Integer> urlEntry = urlCatsIter.next();
+			currSourceUrl = urlEntry.getKey();
 			currCat = urlEntry.getValue();
 			currentList = retrieveItemList(urlEntry.getKey());
 			if (currentList == null || currentList.isEmpty()) {
@@ -57,6 +59,7 @@ public class ListSiteCrawler extends AbstractCrawler {
 		}
 
 		try {
+			entity.setSourceUrl(currSourceUrl);
 			entity.set(categoryFieldName, currCat);
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
