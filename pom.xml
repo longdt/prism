@@ -55,30 +55,9 @@
 		  <version>2.15</version>
 		</dependency>
 		<dependency>
-			<groupId>jdom</groupId>
-			<artifactId>jdom</artifactId>
-			<version>1.1</version>
-			<type>jar</type>
-		</dependency>
-		<dependency>
 			<artifactId>je</artifactId>
 			<groupId>com.sleepycat</groupId>
 			<version>4.0.92</version>
-		</dependency>
-		<dependency>
-			<groupId>rome</groupId>
-			<artifactId>rome</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/rome-1.0.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>rome</groupId>
-			<artifactId>rome-fetcher</artifactId>
-			<version>1.0</version>
-			<type>jar</type>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/rome-fetcher-1.0.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
@@ -156,6 +135,16 @@
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>com.rometools</groupId>
+			<artifactId>rome</artifactId>
+			<version>1.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.rometools</groupId>
+			<artifactId>rome-fetcher</artifactId>
+			<version>1.5.0</version>
 		</dependency>
 	</dependencies>
 </project>

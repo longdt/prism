@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import com.ant.crawler.core.entity.EntityBuilder;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
 
 public abstract class AbstractRssCrawler extends AbstractCrawler {
 	protected FeedReader fetcher;

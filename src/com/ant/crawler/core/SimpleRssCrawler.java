@@ -11,27 +11,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.beanutils.BeanUtils;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
+import org.apache.commons.beanutils.BeanUtils;
+
 import com.ant.crawler.core.conf.entity.EntityConf;
-import com.ant.crawler.core.conf.entity.Field;
 import com.ant.crawler.core.conf.entity.Filter;
 import com.ant.crawler.core.conf.entity.MappingField;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.parse.FilterEngine;
 import com.ant.crawler.core.parse.JSFilterEngine;
-import com.ant.crawler.core.parse.RegexFilterEngine;
 import com.ant.crawler.core.parse.JavaFilterEngine;
+import com.ant.crawler.core.parse.RegexFilterEngine;
 import com.ant.crawler.core.parse.XPathWrapper;
 import com.ant.crawler.dao.Persistencer;
 import com.ant.crawler.plugins.PluginException;
 import com.ant.crawler.plugins.Wrapper;
-import com.sun.syndication.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndEntry;
 
 /**
  * @author thienlong
@@ -103,7 +100,7 @@ public class SimpleRssCrawler extends AbstractRssCrawler {
 		entity.setCreateTime(creatTime);
 
 		try {
-			entity.setSourceUrl(new URL(item.getLink().trim()));
+			entity.setDetailUrl(new URL(item.getLink().trim()));
 
 			for (MappingField field : fields) {
 				String val = BeanUtils.getProperty(item, field.getRssField());

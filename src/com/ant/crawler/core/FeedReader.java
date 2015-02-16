@@ -22,13 +22,13 @@ import java.net.URL;
 
 import org.apache.log4j.Logger;
 
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.fetcher.FeedFetcher;
-import com.sun.syndication.fetcher.FetcherEvent;
-import com.sun.syndication.fetcher.FetcherListener;
-import com.sun.syndication.fetcher.impl.FeedFetcherCache;
-import com.sun.syndication.fetcher.impl.HashMapFeedInfoCache;
-import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
+import com.rometools.fetcher.FeedFetcher;
+import com.rometools.fetcher.FetcherEvent;
+import com.rometools.fetcher.FetcherListener;
+import com.rometools.fetcher.impl.FeedFetcherCache;
+import com.rometools.fetcher.impl.HashMapFeedInfoCache;
+import com.rometools.fetcher.impl.HttpURLFeedFetcher;
+import com.rometools.rome.feed.synd.SyndFeed;
 
 /**
  * Reads and prints any RSS/Atom feed type. Converted from the original Rome

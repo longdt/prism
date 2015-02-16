@@ -195,7 +195,7 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 		while (!shutdowned) {
 			EntityBuilder entity = factory.newEntityBuilder();
 			if (!makeCrawlTask(entity)) {
-				htmlDom = pageFetcher.retrieve(entity.getSourceUrl());
+				htmlDom = pageFetcher.retrieve(entity.getDetailUrl());
 				if (htmlDom == null
 						|| (htmlDom != null && !detailWrapper.extract(htmlDom, entity))) {
 					continue;
