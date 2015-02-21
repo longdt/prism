@@ -22,7 +22,6 @@ import com.ant.crawler.core.conf.entity.MappingField;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.parse.FilterEngine;
 import com.ant.crawler.core.parse.JSFilterEngine;
-import com.ant.crawler.core.parse.JavaFilterEngine;
 import com.ant.crawler.core.parse.RegexFilterEngine;
 import com.ant.crawler.core.parse.XPathWrapper;
 import com.ant.crawler.dao.Persistencer;
@@ -67,12 +66,8 @@ public class SimpleRssCrawler extends AbstractRssCrawler {
 					engine = new RegexFilterEngine();
 					filterEngines.add(engine);
 					break;
-				case "jsall":
+				case "scriptall":
 					engine = new JSFilterEngine(conf);
-					filterEngines.add(engine);
-					break;
-				case "javaall":
-					engine = new JavaFilterEngine(conf);
 					filterEngines.add(engine);
 					break;
 				default:

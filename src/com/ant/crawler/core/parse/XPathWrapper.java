@@ -136,24 +136,16 @@ public class XPathWrapper implements Wrapper, Configurable {
 					engine = new RegexFilterEngine();
 					one.add(engine);
 					break;
-				case "jsone":
+				case "scriptone":
 					engine = new JSFilterEngine(conf);
-					one.add(engine);
-					break;
-				case "javaone":
-					engine = new JavaFilterEngine(conf);
 					one.add(engine);
 					break;
 				case "regexall":
 					engine = new RegexFilterEngine();
 					all.add(engine);
 					break;
-				case "jsall":
+				case "scriptall":
 					engine = new JSFilterEngine(conf);
-					all.add(engine);
-					break;
-				case "javaall":
-					engine = new JavaFilterEngine(conf);
 					all.add(engine);
 					break;
 				default:

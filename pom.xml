@@ -97,13 +97,6 @@
 			<version>1.4</version>
 		</dependency>
 		<dependency>
-			<groupId>bsh</groupId>
-			<artifactId>bsh</artifactId>
-			<version>2.0b4</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/bsh-2.0b4.jar</systemPath>
-		</dependency>
-		<dependency>
 			<groupId>jspf</groupId>
 			<artifactId>jspf-core</artifactId>
 			<version>1.0.2</version>
