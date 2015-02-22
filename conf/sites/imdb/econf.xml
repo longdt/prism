@@ -8,45 +8,50 @@
 		<listSite>
 			<itemXpath>//div[@itemtype='http://schema.org/Movie']</itemXpath>
 			<field xpath="table/tbody/tr[1]/td[2]/h4/a/@href" name="tempField">
-				<filter type="javaone">
+				<filter type="scriptone">
 					<![CDATA[
-						import com.ant.crawler.core.utils.PrismConstants;
-						URL listSite = new URL(conf.get(PrismConstants.PLUGIN_HOME_SITE));
-						URL url = new URL(listSite, field);
-						field= url.toString();
-						entity.setSourceUrl(url);
+						var PrismConstants = Java.type("com.ant.crawler.core.utils.PrismConstants");
+						var URL = Java.type("java.net.URL");
+						var Date = Java.type("java.util.Date");
+						var Integer = Java.type("java.lang.Integer");
+						var url = new URL(entity.getSourceUrl(), field);
+						entity.setDetailUrl(url);
 						entity.set("_mt", new Date());
+						field= url.toString();
 						if (field.startsWith("http://www.imdb.com/title/tt")) {
-							int index = "http://www.imdb.com/title/tt".length();
-							int end = field.indexOf('/', index);
+							var index = "http://www.imdb.com/title/tt".length();
+							var end = field.indexOf('/', index);
 							if (end == -1) {
 								end = field.length();
 							}
-							int imdbCode = Integer.parseInt(field.substring(index, end));
+							var imdbCode = Integer.parseInt(field.substring(index, end));
 							entity.set("imdb_code", imdbCode);
 						}
 					]]>
 				</filter>
 			</field>
-			<field xpath="table/tbody/tr[1]/td[2]/h4/a/text()" name="title"></field>
-			<field xpath="table/tbody/tr[1]/td[1]/div/a/div/img/@src" name="cover_image"></field>
 		</listSite>
 		<detailSite>
+			<field xpath="//td[@id='overview-top']/h1[@class='header']/span[@class='itemprop']/text()" name="title"></field>
+			<field xpath="//td[@id='img_primary']/div[@class='image']/a/img/@src" name="cover_image"></field>
 			<field
-				xpath="//p[@itemprop='description'] | //div[@itemprop='description']/p" name="description" required="false"></field>
+				xpath="//td[@id='overview-top']/p[@itemprop='description']/text()" name="description" required="false"></field>
+			
+			<field
+				xpath="//div[@id='titleStoryLine']/div[@itemprop='description']/p/text()" name="plot" required="false"></field>
 			
 			<field xpath="//div[@class='infobar']/a/span/text()" name="genre"  required="false">
-				<filter type="javaone"><![CDATA[
-					String[] tags = field.split("-");
+				<filter type="scriptone"><![CDATA[
+					var tags = field.split("-");
 					if (tags.length == 0) {
 						return;
 					}
 					field = tags[0].trim() + ",";
-					for (int i = 1; i < tags.length; ++i) {
+					for (var i = 1; i < tags.length; ++i) {
 						field = field + "\n" + tags[i].trim() + ",";
 					}
 				]]></filter>
-				<filter type="javaall"><![CDATA[
+				<filter type="scriptall"><![CDATA[
 					if (field.length() > 1) {
 						field = field.substring(0, field.length() - 1);
 						field = field.replace(",\n", ", ");
@@ -55,26 +60,45 @@
 			</field>
 			<field xpath="//h1[@class='header']/span[@class='nobr']/a/text()" name="published_year"></field>
 			<field xpath="//div[@class='star-box giga-star']/div[@class='titlePageSprite star-box-giga-star']/text()" name="imdb_score">
-				<filter type="javaall">
+				<filter type="scriptall">
 					<![CDATA[
 					field = field.trim();
 				]]>
 				</filter>
 			</field>
-			<field xpath="//div[@class='txt-block']/span[@itemprop='contentRating']/text()" name="age_rating">				
-				<filter type="javaall">
+			<field xpath="//td[@id='overview-top']/div[@class='infobar']/span[@itemprop='contentRating']/@content" name="age_rating"></field>
+			<field xpath="//div[@id='titleDetails']/div[@class='txt-block' and h4/text() = 'Language:']/a/text()" name="language"></field>
+			<field xpath="//div[@id='titleDetails']/div[@class='txt-block' and h4/text() = 'Country:']/a/text()" name="country"></field>
+			<field xpath="//td[@id='overview-top']/div[@class='infobar']/span[@class='nobr']/a[@title='See all release dates']/text()[1]" name="temp_release_date">
+				<filter type="scriptall">
 					<![CDATA[
-					String prefix = "Rated ";
-					if (field.startsWith(prefix)) {
-						int index = prefix.length();
-						int end = field.indexOf(' ', index);
-						if (end == -1) {
-							end = field.length();
-						}
-						field = field.substring(index, end);
+						field = field.trim();
+						var SimpleDateFormat = Java.type("java.text.SimpleDateFormat");
+						var formatter = new SimpleDateFormat("d MMMM yyyy");
+						entity.set("release_date", formatter.parse(field));
+					]]>
+				</filter>
+			</field>
+			<field xpath="//td[@id='overview-top']/div[@class='infobar']/time[@itemprop='duration']/text()" name="runtime">
+				<filter type="scriptall">
+					<![CDATA[
+					field = field.trim();
+					if (field.endsWith(" min")) {
+						field = field.substring(0, field.length() - 4);
+					} else {
+						field = null;
 					}
 					]]>
 				</filter>
+			</field>
+			<field xpath="//td[@id='overview-top']/div[@itemprop='director']/a/span[@itemprop='name']/text()" name="director">
+				<filter type="regexall" replace=", ">\n</filter>
+			</field>
+			<field xpath="//td[@id='overview-top']/div[@itemprop='creator']/a/span[@itemprop='name']/text()" name="writer">
+				<filter type="regexall" replace=", ">\n</filter>
+			</field>
+			<field xpath="//div[@id='titleCast']/table[@class='cast_list']/tbody/tr[position() &gt; 1 and position() &lt; 6]/td[@itemprop='actor']/a/span/text()" name="actors">
+				<filter type="regexall" replace=", ">\n</filter>
 			</field>
 		</detailSite>
 	</entityFields>
