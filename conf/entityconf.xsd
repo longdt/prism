@@ -90,6 +90,9 @@
     		<xs:element minOccurs="0" maxOccurs="unbounded" name="field"
     			type="field">
     		</xs:element>
+    		<xs:element minOccurs="0" maxOccurs="unbounded" name="expand"
+    			type="expand">
+    		</xs:element>
     	</xs:sequence>
     </xs:complexType>
 
@@ -97,5 +100,15 @@
     	<xs:sequence>
     		<xs:element name="mappingField" type="mappingField" minOccurs="0" maxOccurs="unbounded"></xs:element>
     	</xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="expand">
+    	<xs:sequence>
+    		<xs:element minOccurs="1" maxOccurs="unbounded" name="field"
+    			type="field">
+    		</xs:element>
+    	</xs:sequence>
+    	<xs:attribute name="link" type="xs:string" use="required"></xs:attribute>
+    	<xs:attribute name="required" type="xs:boolean" default="true"></xs:attribute>
     </xs:complexType>
 </xs:schema>

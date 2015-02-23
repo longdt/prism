@@ -12,22 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for detailSite complex type.
+ * <p>Java class for expand complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="detailSite">
+ * &lt;complexType name="expand">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="field" type="{}field" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="expand" type="{}expand" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="field" type="{}field" maxOccurs="unbounded"/>
  *       &lt;/sequence>
+ *       &lt;attribute name="link" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="required" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -36,14 +39,17 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "detailSite", propOrder = {
-    "field",
-    "expand"
+@XmlType(name = "expand", propOrder = {
+    "field"
 })
-public class DetailSite {
+public class Expand {
 
+    @XmlElement(required = true)
     protected List<Field> field;
-    protected List<Expand> expand;
+    @XmlAttribute(name = "link", required = true)
+    protected String link;
+    @XmlAttribute(name = "required")
+    protected Boolean required;
 
     /**
      * Gets the value of the field property.
@@ -75,32 +81,55 @@ public class DetailSite {
     }
 
     /**
-     * Gets the value of the expand property.
+     * Gets the value of the link property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the expand property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExpand().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Expand }
-     * 
-     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public List<Expand> getExpand() {
-        if (expand == null) {
-            expand = new ArrayList<Expand>();
+    public String getLink() {
+        return link;
+    }
+
+    /**
+     * Sets the value of the link property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setLink(String value) {
+        this.link = value;
+    }
+
+    /**
+     * Gets the value of the required property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isRequired() {
+        if (required == null) {
+            return true;
+        } else {
+            return required;
         }
-        return this.expand;
+    }
+
+    /**
+     * Sets the value of the required property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setRequired(Boolean value) {
+        this.required = value;
     }
 
 }

@@ -321,8 +321,8 @@ public class XPathWrapper implements Wrapper, Configurable {
 						&& field.isRequired()) {
 					return false;
 				}
-			} catch (Exception e) {
-				logger.error("error when extract data: " + entity, e);
+			} catch (IllegalAccessException | InvocationTargetException e) {
+				logger.warn("error when extract data: " + entity, e);
 				return false;
 			}
 		}

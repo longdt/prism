@@ -10,8 +10,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,14 +27,15 @@ import com.ant.crawler.core.conf.Configuration;
 import com.ant.crawler.core.conf.PrismConfiguration;
 import com.ant.crawler.core.conf.entity.Category;
 import com.ant.crawler.core.conf.entity.EntityConf;
+import com.ant.crawler.core.conf.entity.Expand;
 import com.ant.crawler.core.download.PageFetcher;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.entity.EntityBuilderFactory;
+import com.ant.crawler.core.parse.WrapperFactory;
 import com.ant.crawler.core.utils.PrismConstants;
 import com.ant.crawler.dao.Persistencer;
 import com.ant.crawler.dao.dyna.DynaPersistencer;
 import com.ant.crawler.plugins.Crawler;
-import com.ant.crawler.plugins.PluginException;
 import com.ant.crawler.plugins.Wrapper;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 
@@ -58,6 +59,8 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 	private DateFormat formater = DateFormat.getDateTimeInstance();
 	private String lastTimeFile;
 	private Wrapper detailWrapper;
+	private List<Expand> expands;
+	private List<Wrapper> expandWrappers;
 	private Persistencer persistencer;
 	private EntityBuilderFactory factory;
 	protected String categoryFieldName;
@@ -66,16 +69,22 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 
 	public AbstractCrawler() {
 		pageFetcher = new PageFetcher();
+		expandWrappers = new ArrayList<Wrapper>();
 	}
 
 	@Override
 	public void init(EntityConf entityConf, Wrapper wrapper,
-			Persistencer persistencer) throws PluginException {
+			Persistencer persistencer) throws Exception {
 		if (conf != null) {
 			pageFetcher.init(conf);
 		}
 		this.entityConf = entityConf;
 		this.detailWrapper = wrapper;
+		expands = entityConf.getEntityFields().getDetailSite().getExpand();
+		Class<Wrapper> wrapperClass = (Class<Wrapper>) wrapper.getClass();
+		for (Expand expand : expands) {
+			expandWrappers.add(WrapperFactory.createWrapper(wrapperClass, conf, expand.getField()));
+		}
 		this.persistencer = persistencer;
 		String mapField = entityConf.getCategories().getMappingField();
 		if (mapField != null && !mapField.isEmpty()) {
@@ -197,8 +206,10 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 			if (!makeCrawlTask(entity)) {
 				entity.setSourceUrl(entity.getDetailUrl());
 				htmlDom = pageFetcher.retrieve(entity.getDetailUrl());
-				if (htmlDom == null
-						|| (htmlDom != null && !detailWrapper.extract(htmlDom, entity))) {
+				if (htmlDom == null) {
+					continue;
+				} else if (!detailWrapper.extract(htmlDom, entity)
+								|| !expand(entity, htmlDom)) {
 					continue;
 				}
 			}
@@ -222,6 +233,38 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 		}
 	}
 
+
+	private boolean expand(EntityBuilder entity, DomNode htmlDom) {
+		if (expandWrappers.isEmpty()) {
+			return true;
+		}
+		DomNode expandPage = null;
+		URL url = null;
+		URL origURL = entity.getSourceUrl();
+		for (int i = 0, n = expands.size(); i < n; ++i) {
+			Wrapper wrapper = expandWrappers.get(i);
+			Expand expand = expands.get(i);
+			try {
+				url = getExpandUrl(origURL, htmlDom, expand.getLink());
+				expandPage = pageFetcher.retrieve(url);
+				entity.setSourceUrl(url);
+				if (!wrapper.extract(expandPage, entity) && expand.isRequired()) {
+					return false;
+				}
+			} catch (Exception e) {
+				if (expand.isRequired()) {
+					return false;
+				}
+			}
+		}
+		entity.setSourceUrl(origURL);
+		return true;
+	}
+
+	private URL getExpandUrl(URL url, DomNode htmlDom, String linkXpath) throws MalformedURLException {
+		 List<DomNode> itemNode = (List<DomNode>) htmlDom.getByXPath(linkXpath);
+		 return (itemNode != null && !itemNode.isEmpty()) ? new URL(url, itemNode.get(0).getNodeValue()) : null;
+	}
 
 	/**
 	 * chu yeu phim url source, category bai bao

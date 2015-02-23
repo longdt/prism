@@ -35,11 +35,11 @@ public class ListSiteCrawler extends AbstractCrawler {
 	
 	@Override
 	public void init(EntityConf entityConf, Wrapper detailWrapper,
-			Persistencer persistencer) throws PluginException {
+			Persistencer persistencer) throws Exception {
 		super.init(entityConf, detailWrapper, persistencer);
 		itemXpath = entityConf.getEntityFields().getListSite().getItemXpath();
 		fields = entityConf.getEntityFields().getListSite().getField();
-		listWrapper = WrapperFactory.createNewsWrapper(conf, fields);
+		listWrapper = WrapperFactory.createDefaultWrapper(conf, fields);
 		hasDetailSite = entityConf.getEntityFields().getDetailSite().getField().isEmpty();
 	}
 	

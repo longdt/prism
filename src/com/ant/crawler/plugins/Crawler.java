@@ -7,7 +7,7 @@ import com.ant.crawler.dao.Persistencer;
 
 public interface Crawler extends Plugin {
 	
-	public void init(EntityConf conf, Wrapper wrapper, Persistencer persistencer) throws PluginException;
+	public void init(EntityConf conf, Wrapper wrapper, Persistencer persistencer) throws Exception;
 	
 	public void crawl() throws InterruptedException;
 	

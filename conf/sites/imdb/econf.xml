@@ -94,12 +94,18 @@
 			<field xpath="//td[@id='overview-top']/div[@itemprop='director']/a/span[@itemprop='name']/text()" name="director">
 				<filter type="regexall" replace=", ">\n</filter>
 			</field>
-			<field xpath="//td[@id='overview-top']/div[@itemprop='creator']/a/span[@itemprop='name']/text()" name="writer">
-				<filter type="regexall" replace=", ">\n</filter>
-			</field>
 			<field xpath="//div[@id='titleCast']/table[@class='cast_list']/tbody/tr[position() &gt; 1 and position() &lt; 6]/td[@itemprop='actor']/a/span/text()" name="actors">
 				<filter type="regexall" replace=", ">\n</filter>
 			</field>
+			<field xpath="//td[@id='overview-top']/div[@itemprop='creator']/a/span[@itemprop='name']/text()" name="writer">
+				<filter type="regexall" replace=", ">\n</filter>
+			</field>
+			<expand link="//td[@id='overview-top']/div[@itemprop='creator']/a[not(@itemprop)]/@href" required="false">
+				<field xpath="//div[@id='fullcredits_content']/table[@class='simpleTable simpleCreditsTable' and position() = 2]/tbody/tr/td[@class='name']/a/text()" name="writer">
+					<filter type="scriptone"><![CDATA[field = field.trim();]]></filter>
+					<filter type="regexall" replace=", ">\n</filter>
+				</field>
+			</expand>
 		</detailSite>
 	</entityFields>
 	<categories mappingField="category_id">

@@ -40,7 +40,7 @@ public class SimpleRssCrawler extends AbstractRssCrawler {
 
 	@Override
 	public void init(EntityConf entityConf, Wrapper wrapper,
-			Persistencer persistencer) throws PluginException {
+			Persistencer persistencer) throws Exception {
 		super.init(entityConf, wrapper, persistencer);
 		fields = entityConf.getEntityFields().getRssSite().getMappingField();
 		filterAll = new HashMap<String, List<FilterEngine>>();

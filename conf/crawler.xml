@@ -10,7 +10,7 @@
 	</property>
 	<property>
 		<name>crawler.plugin.whitelist</name>
-		<value>imdb_js</value>
+		<value>imdb</value>
 	</property>
 	<property>
 		<name>crawler.plugin.blacklist</name>
