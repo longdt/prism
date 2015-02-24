@@ -10,7 +10,6 @@
 			<field xpath="table/tbody/tr[1]/td[2]/h4/a/@href" name="tempField">
 				<filter type="scriptone">
 					<![CDATA[
-						var PrismConstants = Java.type("com.ant.crawler.core.utils.PrismConstants");
 						var URL = Java.type("java.net.URL");
 						var Date = Java.type("java.util.Date");
 						var Integer = Java.type("java.lang.Integer");
