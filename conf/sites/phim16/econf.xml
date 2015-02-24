@@ -34,6 +34,9 @@
 		<detailSite>
 			<field xpath="//div[@class='movie-info']/h1/text()" name="title"></field>
 			<field xpath="//div[@class='movie-content clearfix']/*" name="description" required="false"></field>
+			<field xpath="//div[@class='movie-info']/p[text()='Thể loại: ']/span/a/text()" name="tags"  required="false">
+				<filter type="regexall" replace=", ">\n</filter>
+			</field>
 			<expand link="//div[@class='movie-info']/div[@class='movie-button clear']/a/@href">
 				<field
 				xpath="//div[@id='severlist']/script[@type='text/javascript']/text()" name="embed_web">
@@ -48,7 +51,12 @@
 							java.lang.System.out.println(field);
 							var movies = JSON.parse(field);
 							var decoder = java.util.Base64.getUrlDecoder();
-							field = new java.lang.String(decoder.decode(movies[0].link));
+							var movie = movies[movies.length - 1];
+							if (movie.name == "Xem Full" || movies.length == 1) {
+								field = new java.lang.String(decoder.decode(movie.link));
+							} else {
+								field = null;
+							}
 						]]>
 					</filter>
 				</field>
