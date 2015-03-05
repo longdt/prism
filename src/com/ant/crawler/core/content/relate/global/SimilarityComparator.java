@@ -1,6 +1,8 @@
-package com.ant.crawler.core.content.relate;
+package com.ant.crawler.core.content.relate.global;
 
 import java.util.List;
+
+import com.ant.crawler.core.content.relate.DocSimilar;
 
 public interface SimilarityComparator {
 

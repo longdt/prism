@@ -8,9 +8,9 @@ import java.util.Map.Entry;
 
 import com.ant.crawler.core.conf.PrismConfiguration;
 import com.ant.crawler.core.content.relate.DocSimilar;
-import com.ant.crawler.core.content.relate.RelationImpl;
 import com.ant.crawler.core.content.relate.RelationTrainer;
 import com.ant.crawler.core.content.relate.Relationer;
+import com.ant.crawler.core.content.relate.global.GlobalRelationer;
 import com.ant.crawler.core.download.Downloader;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.utils.PrismConstants;
@@ -45,7 +45,7 @@ public abstract class BasePersistencer implements Persistencer {
 					}
 				};
 			} else {
-				relation = relate.equals("train") ? RelationTrainer.getInstance() : RelationImpl.getInstance();
+				relation = relate.equals("train") ? RelationTrainer.getInstance() : GlobalRelationer.getInstance();
 			}
 			imgSavePath = PrismConfiguration.getInstance().get(
 					PrismConstants.CONTENT_DOWNLOAD_IMAGE_SAVEPATH);

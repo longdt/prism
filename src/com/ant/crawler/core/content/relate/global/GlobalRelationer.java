@@ -1,4 +1,4 @@
-package com.ant.crawler.core.content.relate;
+package com.ant.crawler.core.content.relate.global;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,13 +8,15 @@ import org.apache.log4j.Logger;
 import com.ant.crawler.core.conf.Configuration;
 import com.ant.crawler.core.conf.ConfigurationException;
 import com.ant.crawler.core.conf.PrismConfiguration;
+import com.ant.crawler.core.content.relate.DocSimilar;
+import com.ant.crawler.core.content.relate.Relationer;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.utils.PrismConstants;
 
-public class RelationImpl implements Relationer {
+public class GlobalRelationer implements Relationer {
 	private static final Logger logger = Logger
-			.getLogger(RelationImpl.class);
-	private static Relationer instance = new RelationImpl();
+			.getLogger(GlobalRelationer.class);
+	private static Relationer instance = new GlobalRelationer();
 	private SimilarityComparator comparator;
 	private VectorNormalizor normalizor;
 	private VectorDocDAO vectorDAO;
@@ -24,7 +26,7 @@ public class RelationImpl implements Relationer {
 	 * @throws IOException
 	 * 
 	 */
-	private RelationImpl() {
+	private GlobalRelationer() {
 		try {
 			normalizor = new VectorNormalizor();
 			vectorDAO = new VectorDocDAOImpl();

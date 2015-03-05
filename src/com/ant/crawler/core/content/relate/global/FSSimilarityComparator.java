@@ -1,9 +1,11 @@
-package com.ant.crawler.core.content.relate;
+package com.ant.crawler.core.content.relate.global;
 
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
+
+import com.ant.crawler.core.content.relate.DocSimilar;
 
 public class FSSimilarityComparator extends AbstractSimilarityComparator {
 	private VectorDocDAO vectorDao;

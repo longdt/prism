@@ -1,4 +1,4 @@
-package com.ant.crawler.core.content.relate;
+package com.ant.crawler.core.content.relate.global;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import com.ant.crawler.core.content.relate.DocSimilar;
 
 public class RAMSimilarityComparator extends AbstractSimilarityComparator implements SimilarityComparator {
 	private static Logger logger = Logger.getLogger(RAMSimilarityComparator.class);

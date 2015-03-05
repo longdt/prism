@@ -1,4 +1,4 @@
-package com.ant.crawler.core.content.relate;
+package com.ant.crawler.core.content.relate.global;
 
 public class WordCounter {
 	public void increaseCountWords() {

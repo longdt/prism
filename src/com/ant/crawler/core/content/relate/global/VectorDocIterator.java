@@ -1,4 +1,4 @@
-package com.ant.crawler.core.content.relate;
+package com.ant.crawler.core.content.relate.global;
 
 public interface VectorDocIterator extends AutoCloseable {
 
