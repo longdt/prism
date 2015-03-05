@@ -1,21 +1,30 @@
 package com.ant.crawler.core.content.relate;
 
 import java.net.URL;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class DuplicateChecker implements Predicate<URL>, Consumer<URL> {
-
-	@Override
-	public void accept(URL t) {
-		// TODO Auto-generated method stub
-		
+public class DuplicateChecker {
+	private Map<URL, Boolean> urls;
+	private int maxUrls;
+	
+	public DuplicateChecker(String pluginDir, int maxUrls) {
+		this.maxUrls = maxUrls;
+		urls = new LinkedHashMap<URL, Boolean>() {
+			@Override
+			protected boolean removeEldestEntry(
+					java.util.Map.Entry<URL, Boolean> eldest) {
+				return size() > DuplicateChecker.this.maxUrls;
+			}
+		};
 	}
 
-	@Override
-	public boolean test(URL t) {
-		// TODO Auto-generated method stub
-		return false;
+	public void accept(URL url) {
+		urls.put(url, Boolean.TRUE);
+	}
+
+	public boolean test(URL url) {
+		return maxUrls > 0 && urls.containsKey(url);
 	}
 
 }

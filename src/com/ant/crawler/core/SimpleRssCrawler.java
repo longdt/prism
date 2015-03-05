@@ -7,7 +7,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,6 @@ import com.ant.crawler.core.parse.JSFilterEngine;
 import com.ant.crawler.core.parse.RegexFilterEngine;
 import com.ant.crawler.core.parse.XPathWrapper;
 import com.ant.crawler.dao.Persistencer;
-import com.ant.crawler.plugins.PluginException;
 import com.ant.crawler.plugins.Wrapper;
 import com.rometools.rome.feed.synd.SyndEntry;
 
@@ -88,12 +86,6 @@ public class SimpleRssCrawler extends AbstractRssCrawler {
 	 */
 	@Override
 	protected boolean populate(EntityBuilder entity, SyndEntry item) {
-		Date creatTime = item.getPublishedDate();
-		if (creatTime != null && !creatTime.after(lastAccessTime)) {
-			return false;
-		}
-		entity.setCreateTime(creatTime);
-
 		try {
 			entity.setDetailUrl(new URL(item.getLink().trim()));
 

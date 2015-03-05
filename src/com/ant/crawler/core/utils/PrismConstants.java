@@ -119,4 +119,6 @@ public class PrismConstants {
 	public static final String TAG_CONF = "data/appConfig.properties";
 	
 	public static final String VECTOR_STORAGE_CONF = "data/dbvec.properties";
+
+	public static final String ENTITY_DUPLICATE_MAXURL = "entity.duplicate.maxurl";
 }

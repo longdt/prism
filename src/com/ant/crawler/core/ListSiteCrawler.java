@@ -70,10 +70,6 @@ public class ListSiteCrawler extends AbstractCrawler {
 		}
 		boolean result = listWrapper.extract(currentList.get(index), entity);
 		--index;
-		if (entity.getCreateTime() != null && !entity.getCreateTime().after(lastAccessTime)) {
-			entity.setDetailUrl(null);
-			return false;
-		}
 		return result && hasDetailSite;
 	}
 

@@ -1,15 +1,7 @@
 package com.ant.crawler.core;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -28,6 +20,7 @@ import com.ant.crawler.core.conf.PrismConfiguration;
 import com.ant.crawler.core.conf.entity.Category;
 import com.ant.crawler.core.conf.entity.EntityConf;
 import com.ant.crawler.core.conf.entity.Expand;
+import com.ant.crawler.core.content.relate.DuplicateChecker;
 import com.ant.crawler.core.download.PageFetcher;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.entity.EntityBuilderFactory;
@@ -44,9 +37,6 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 			.getLogger(AbstractCrawler.class);
 	private static final boolean debugMode = PrismConfiguration.getInstance()
 			.getBoolean(PrismConstants.CRAWL_DEBUG_MODE, false);
-	private static final boolean useCrawlTime = PrismConfiguration
-			.getInstance().getBoolean(
-					PrismConstants.ENTITY_PUBDATE_USING_CRAWLTIME, false);
 	private Iterator<Entry<URL, Integer>> urlCatsIter;
 	private Map<URL, Integer> urlCats;
 	protected PageFetcher pageFetcher;
@@ -54,14 +44,11 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 	protected Configuration conf;
 	protected EntityConf entityConf;
 	protected URL homeSite;
-	protected Date lastAccessTime;
-	protected Date nextAccessTime;
-	private DateFormat formater = DateFormat.getDateTimeInstance();
-	private String lastTimeFile;
 	private Wrapper detailWrapper;
 	private List<Expand> expands;
 	private List<Wrapper> expandWrappers;
 	private Persistencer persistencer;
+	private DuplicateChecker duplicateChecker;
 	private EntityBuilderFactory factory;
 	protected String categoryFieldName;
 	private String idField;
@@ -86,6 +73,9 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 			expandWrappers.add(WrapperFactory.createWrapper(wrapperClass, conf, expand.getField()));
 		}
 		this.persistencer = persistencer;
+		String pluginDir = conf.get(PrismConstants.PLUGIN_DIR);
+		int maxUrlCheck = conf.getInt(PrismConstants.ENTITY_DUPLICATE_MAXURL, 0);
+		duplicateChecker = new DuplicateChecker(pluginDir, maxUrlCheck);
 		String mapField = entityConf.getCategories().getMappingField();
 		if (mapField != null && !mapField.isEmpty()) {
 			categoryFieldName = mapField;
@@ -110,10 +100,6 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 		if (sleepMillisTime < 0) {
 			sleepMillisTime = -1;
 		}
-		lastTimeFile = conf.get(PrismConstants.PLUGIN_DIR) + File.separatorChar
-				+ PrismConstants.PLUGIN_ACCESS_TIME_FILE;
-		lastAccessTime = getLastAcessTime(lastTimeFile);
-		nextAccessTime = new Date(lastAccessTime.getTime());
 		factory = initEntityBuilderFactory();
 	}
 
@@ -154,81 +140,28 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 		return urlCats;
 	}
 
-	/**
-	 * @param string
-	 * @return
-	 */
-	private Date getLastAcessTime(String timeFile) {
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(timeFile));
-			String timeString = reader.readLine();
-			if (timeString != null
-					&& !((timeString = timeString.trim()).isEmpty())) {
-				return formater.parse(timeString);
-			}
-		} catch (IOException e) {
-		} catch (ParseException e) {
-			logger.warn(timeFile + " contain invalid time", e);
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return new Date(0);
-	}
-
-	private void setLastAcessTime(String timeFile) {
-		PrintWriter writer = null;
-		try {
-			writer = new PrintWriter(new FileWriter(timeFile));
-			String timeString = formater.format(lastAccessTime);
-			writer.println(timeString);
-		} catch (IOException e) {
-			logger.warn("error when writting time to " + timeFile, e);
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
-		}
-	}
-
 	@Override
 	public void crawl() throws InterruptedException {
 		DomNode htmlDom = null;
-		Date createTime = null;
+		URL detailURL = null;
 		while (!shutdowned) {
 			EntityBuilder entity = factory.newEntityBuilder();
 			if (!makeCrawlTask(entity)) {
-				entity.setSourceUrl(entity.getDetailUrl());
-				htmlDom = pageFetcher.retrieve(entity.getDetailUrl());
-				if (htmlDom == null) {
+				detailURL = entity.getDetailUrl();
+				if (detailURL == null || duplicateChecker.test(detailURL)) {
 					continue;
-				} else if (!detailWrapper.extract(htmlDom, entity)
+				}
+				entity.setSourceUrl(detailURL);
+				htmlDom = pageFetcher.retrieve(detailURL);
+				if (htmlDom == null || !detailWrapper.extract(htmlDom, entity)
 								|| !expand(entity, htmlDom)) {
 					continue;
 				}
 			}
 			
-			createTime = entity.getCreateTime();
-			if (createTime == null) {
-				logger.debug("can't detect createTime field of entity: "
-						+ entity);
-			} else if (!createTime.after(lastAccessTime)) {
-				continue;
-			} else if (createTime.after(nextAccessTime)) {
-				nextAccessTime.setTime(createTime.getTime());
-			}
-			
-			if (useCrawlTime) {
-				entity.setCreateTime(new Date());
-			}
 			if (!debugMode) {
 				persistencer.store(entity, idField);
+				duplicateChecker.accept(detailURL);
 			}
 		}
 	}
@@ -252,6 +185,7 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 					return false;
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				if (expand.isRequired()) {
 					return false;
 				}
@@ -278,8 +212,6 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 			return initTask(entity, urlCatsIter);
 		} catch (NoSuchElementException e) {
 			persistencer.sync();
-			lastAccessTime.setTime(nextAccessTime.getTime());
-			setLastAcessTime(lastTimeFile);
 			if (sleepMillisTime != -1) {
 				Thread.sleep(sleepMillisTime);
 			}

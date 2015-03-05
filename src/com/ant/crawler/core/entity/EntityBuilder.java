@@ -18,7 +18,7 @@ public class EntityBuilder {
 	private Object entity;
 	private URL sourceUrl;
 	private URL detailUrl;
-	private Date createTime;
+	
 	EntityBuilder(Object entity) {
 		this.entity = entity;
 		indexDatas = new ArrayList<String>();
@@ -67,15 +67,6 @@ public class EntityBuilder {
 
 	public void setDetailUrl(URL detailUrl) {
 		this.detailUrl = detailUrl;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
 	}
 
 	public void addIndexData(String data) {
