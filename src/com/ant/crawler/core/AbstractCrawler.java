@@ -3,7 +3,6 @@ package com.ant.crawler.core;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -74,7 +73,7 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 		}
 		this.persistencer = persistencer;
 		String pluginDir = conf.get(PrismConstants.PLUGIN_DIR);
-		int maxUrlCheck = conf.getInt(PrismConstants.ENTITY_DUPLICATE_MAXURL, 0);
+		int maxUrlCheck = PrismConfiguration.getInstance().getInt(PrismConstants.ENTITY_DUPLICATE_MAXURL, 0);
 		duplicateChecker = new DuplicateChecker(pluginDir, maxUrlCheck);
 		String mapField = entityConf.getCategories().getMappingField();
 		if (mapField != null && !mapField.isEmpty()) {
@@ -141,7 +140,7 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 	}
 
 	@Override
-	public void crawl() throws InterruptedException {
+	public void crawl() throws Exception {
 		DomNode htmlDom = null;
 		URL detailURL = null;
 		while (!shutdowned) {
@@ -164,6 +163,7 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 				duplicateChecker.accept(detailURL);
 			}
 		}
+		duplicateChecker.save();
 	}
 
 

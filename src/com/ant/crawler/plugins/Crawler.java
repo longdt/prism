@@ -9,7 +9,7 @@ public interface Crawler extends Plugin {
 	
 	public void init(EntityConf conf, Wrapper wrapper, Persistencer persistencer) throws Exception;
 	
-	public void crawl() throws InterruptedException;
+	public void crawl() throws Exception;
 	
 	public void shutdown();
 	

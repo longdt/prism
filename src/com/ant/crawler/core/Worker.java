@@ -13,6 +13,8 @@ public class Worker implements Runnable {
 		try {
 			crawler.crawl();
 		} catch (InterruptedException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
