@@ -10,7 +10,7 @@
 	</property>
 	<property>
 		<name>crawler.plugin.whitelist</name>
-		<value>imdb</value>
+		<value>phim16_tv</value>
 	</property>
 	<property>
 		<name>crawler.plugin.blacklist</name>
@@ -103,5 +103,9 @@
 	<property>
 		<name>webclient.enableJavascript</name>
 		<value>false</value>
+	</property>
+	<property>
+		<name>entity.duplicate.maxurl</name>
+		<value>10000</value>
 	</property>
 </configuration> 

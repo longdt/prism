@@ -9,6 +9,10 @@
 		<value>dyna#movie</value>
 	</property>
 	<property>
+		<name>subentity.class</name>
+		<value>dyna#movie</value>
+	</property>
+	<property>
 		<name>entity.id.field</name>
 		<value>id</value>
 	</property>
