@@ -73,6 +73,8 @@ public class PrismConstants {
 	public static final String CONTENT_LINK_PREFIX = "content.link.prefix";
 	
 	public static final String ENTITY_CLASS = "entity.class";
+	
+	public static final String SUB_ENTITY_CLASS= "subentity.class";
 
 	public static final String ENTITY_THUMBNAIL_FIELD = "entity.thumbnail.field";
 

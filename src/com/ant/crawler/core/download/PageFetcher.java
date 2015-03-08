@@ -13,6 +13,8 @@ import com.gargoylesoftware.htmlunit.CookieManager;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 
 
@@ -111,7 +113,7 @@ public class PageFetcher {
 		return new Cookie(domain, keyValue[0], keyValue[1], path, expire, secure, httpOnly);
 	}
 
-	public DomNode retrieve(String url) {
+	public HtmlPage retrieve(String url) {
 		if (url != null) {
 			try {
 				return client.getPage(url);
@@ -122,7 +124,7 @@ public class PageFetcher {
 		return null;
 	}
 
-	public DomNode retrieve(URL url) {
+	public HtmlPage retrieve(URL url) {
 		if (url != null) {
 			try {
 				return client.getPage(url);
@@ -131,6 +133,13 @@ public class PageFetcher {
 			}
 		}
 		return null;
+	}
+	
+	public HtmlPage navigate(HtmlPage page, String xpath) throws IOException {
+		HtmlAnchor anchor = (HtmlAnchor) page.getFirstByXPath(xpath);
+		URL origURL = page.getUrl();
+		URL distURL = new URL(origURL, anchor.getHrefAttribute());
+		return retrieve(distURL);
 	}
 
 }

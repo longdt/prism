@@ -104,12 +104,12 @@ public class MainExecutor {
 			}
 			pluginManager.addPluginsFrom(URI.create("classpath://" + backend));
 			pluginManager.addPluginsFrom(ClassURI.PLUGIN(XPathWrapper.class));
-			Wrapper wrapper = pluginManager.getPlugin(Wrapper.class);
+			Wrapper wrapper = new XPathWrapper();
 			if (wrapper instanceof Configurable) {
 				((Configurable) wrapper).setConf(conf);
 			}
 
-			Crawler crawler = pluginManager.getPlugin(Crawler.class);
+			Crawler crawler = (Crawler) Class.forName(backend).newInstance();
 			if (crawler instanceof Configurable) {
 				((Configurable) crawler).setConf(conf);
 			}

@@ -16,23 +16,15 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * <p>Java class for filter complex type.
+ * <p>Java class for scriptSite complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="filter">
+ * &lt;complexType name="scriptSite">
  *   &lt;simpleContent>
  *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
- *       &lt;attribute name="type" use="required">
- *         &lt;simpleType>
- *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *             &lt;enumeration value="scriptone"/>
- *             &lt;enumeration value="scriptall"/>
- *           &lt;/restriction>
- *         &lt;/simpleType>
- *       &lt;/attribute>
- *       &lt;attribute name="replace" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="xpath" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/extension>
  *   &lt;/simpleContent>
  * &lt;/complexType>
@@ -41,17 +33,15 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "filter", propOrder = {
+@XmlType(name = "scriptSite", propOrder = {
     "value"
 })
-public class Filter {
+public class ScriptSite {
 
     @XmlValue
     protected String value;
-    @XmlAttribute(name = "type", required = true)
-    protected String type;
-    @XmlAttribute(name = "replace")
-    protected String replace;
+    @XmlAttribute(name = "xpath")
+    protected String xpath;
 
     /**
      * Gets the value of the value property.
@@ -78,51 +68,27 @@ public class Filter {
     }
 
     /**
-     * Gets the value of the type property.
+     * Gets the value of the xpath property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getType() {
-        return type;
+    public String getXpath() {
+        return xpath;
     }
 
     /**
-     * Sets the value of the type property.
+     * Sets the value of the xpath property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setType(String value) {
-        this.type = value;
-    }
-
-    /**
-     * Gets the value of the replace property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getReplace() {
-        return replace;
-    }
-
-    /**
-     * Sets the value of the replace property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setReplace(String value) {
-        this.replace = value;
+    public void setXpath(String value) {
+        this.xpath = value;
     }
 
 }

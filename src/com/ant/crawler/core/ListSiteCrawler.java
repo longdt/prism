@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
-
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import com.ant.crawler.core.conf.entity.EntityConf;
@@ -17,13 +14,11 @@ import com.ant.crawler.core.conf.entity.Field;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.parse.WrapperFactory;
 import com.ant.crawler.dao.Persistencer;
-import com.ant.crawler.plugins.PluginException;
 import com.ant.crawler.plugins.Wrapper;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 
 @PluginImplementation
 public class ListSiteCrawler extends AbstractCrawler {
-	protected XPath xpath = XPathFactory.newInstance().newXPath();
 	protected URL currSourceUrl;
 	protected Integer currCat;
 	protected int index = -1;
@@ -31,7 +26,7 @@ public class ListSiteCrawler extends AbstractCrawler {
 	private String itemXpath;
 	private List<Field> fields;
 	private Wrapper listWrapper;
-	private boolean hasDetailSite;
+	private boolean noDetailSite;
 	
 	@Override
 	public void init(EntityConf entityConf, Wrapper detailWrapper,
@@ -40,7 +35,7 @@ public class ListSiteCrawler extends AbstractCrawler {
 		itemXpath = entityConf.getEntityFields().getListSite().getItemXpath();
 		fields = entityConf.getEntityFields().getListSite().getField();
 		listWrapper = WrapperFactory.createDefaultWrapper(conf, fields);
-		hasDetailSite = entityConf.getEntityFields().getDetailSite().getField().isEmpty();
+		noDetailSite = entityConf.getEntityFields().getDetailSite().getField().isEmpty();
 	}
 	
 	@Override
@@ -70,7 +65,7 @@ public class ListSiteCrawler extends AbstractCrawler {
 		}
 		boolean result = listWrapper.extract(currentList.get(index), entity);
 		--index;
-		return result && hasDetailSite;
+		return result && noDetailSite;
 	}
 
 	private List<DomNode> retrieveItemList(URL url) {

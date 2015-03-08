@@ -18,9 +18,18 @@ public class EntityBuilder {
 	private Object entity;
 	private URL sourceUrl;
 	private URL detailUrl;
+	private EntityBuilder parrent;
+	private List<EntityBuilder> subEntities;
+	private EntityBuilderFactory factory;
+	private String subID;
 	
 	EntityBuilder(Object entity) {
+		this(entity, null);
+	}
+	
+	EntityBuilder(Object entity, EntityBuilderFactory factory) {
 		this.entity = entity;
+		this.factory = factory;
 		indexDatas = new ArrayList<String>();
 		downloadImgs = new HashMap<URL, String>();
 	}
@@ -49,6 +58,19 @@ public class EntityBuilder {
 	public Object getEntity() {
 		return entity;
 	}
+	
+	public EntityBuilder newSubEntity() {
+		if (factory == null) {
+			return null;
+		}
+		EntityBuilder builder = factory.newSubEntityBuilder();
+		if (subEntities == null) {
+			subEntities = new ArrayList<>();
+		}
+		builder.parrent = this;
+		subEntities.add(builder);
+		return builder;
+	}
 
 
 	public URL getSourceUrl() {
@@ -75,5 +97,21 @@ public class EntityBuilder {
 	
 	public List<String> getIndexDatas() {
 		return indexDatas;
+	}
+
+	public List<EntityBuilder> getSubEntities() {
+		return subEntities;
+	}
+
+	public void setSubEntities(List<EntityBuilder> subEntities) {
+		this.subEntities = subEntities;
+	}
+
+	public String getSubID() {
+		return subID;
+	}
+	
+	public void setSubID(String subID) {
+		this.subID = subID;
 	}
 }

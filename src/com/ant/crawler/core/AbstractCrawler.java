@@ -30,11 +30,12 @@ import com.ant.crawler.dao.dyna.DynaPersistencer;
 import com.ant.crawler.plugins.Crawler;
 import com.ant.crawler.plugins.Wrapper;
 import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public abstract class AbstractCrawler implements Crawler, Configurable {
 	private static final Logger logger = Logger
 			.getLogger(AbstractCrawler.class);
-	private static final boolean debugMode = PrismConfiguration.getInstance()
+	protected static final boolean debugMode = PrismConfiguration.getInstance()
 			.getBoolean(PrismConstants.CRAWL_DEBUG_MODE, false);
 	private Iterator<Entry<URL, Integer>> urlCatsIter;
 	private Map<URL, Integer> urlCats;
@@ -43,14 +44,14 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 	protected Configuration conf;
 	protected EntityConf entityConf;
 	protected URL homeSite;
-	private Wrapper detailWrapper;
+	protected Wrapper detailWrapper;
 	private List<Expand> expands;
 	private List<Wrapper> expandWrappers;
-	private Persistencer persistencer;
-	private DuplicateChecker duplicateChecker;
-	private EntityBuilderFactory factory;
+	protected Persistencer persistencer;
+	protected DuplicateChecker duplicateChecker;
+	protected EntityBuilderFactory factory;
 	protected String categoryFieldName;
-	private String idField;
+	protected String idField;
 	private long sleepMillisTime;
 
 	public AbstractCrawler() {
@@ -104,14 +105,24 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 
 	private EntityBuilderFactory initEntityBuilderFactory() {
 		String entityClass = conf.get(PrismConstants.ENTITY_CLASS);
+		String subentityClass = conf.get(PrismConstants.SUB_ENTITY_CLASS);
 		if (entityClass.startsWith("dyna#")) {
 			String tableName = entityClass.substring("dyna#".length());
 			DynaClass dynaClass = ((DynaPersistencer) persistencer).createClass(tableName);
-			return EntityBuilderFactory.newInstance(dynaClass);
+			DynaClass subEClass = null;
+			if (subentityClass.startsWith("dyna#")) {
+				tableName = subentityClass.substring("dyna#".length());
+				subEClass = ((DynaPersistencer) persistencer).createClass(tableName);
+			}
+			return EntityBuilderFactory.newInstance(dynaClass, subEClass);
 		}
 		try {
 			Class cl = Class.forName(entityClass);
-			return EntityBuilderFactory.newInstance(cl);
+			Class subClass = null;
+			if (subentityClass != null && !subentityClass.isEmpty()) {
+				subClass = Class.forName(subentityClass);
+			}
+			return EntityBuilderFactory.newInstance(cl, subClass);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -141,7 +152,7 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 
 	@Override
 	public void crawl() throws Exception {
-		DomNode htmlDom = null;
+		HtmlPage htmlDom = null;
 		URL detailURL = null;
 		while (!shutdowned) {
 			EntityBuilder entity = factory.newEntityBuilder();
@@ -161,13 +172,18 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 			if (!debugMode) {
 				persistencer.store(entity, idField);
 				duplicateChecker.accept(detailURL);
+				doExtThing(entity, htmlDom);
 			}
 		}
 		duplicateChecker.save();
 	}
 
 
-	private boolean expand(EntityBuilder entity, DomNode htmlDom) {
+	protected void doExtThing(EntityBuilder entity, HtmlPage htmlDom) {
+		
+	}
+
+	protected boolean expand(EntityBuilder entity, DomNode htmlDom) {
 		if (expandWrappers.isEmpty()) {
 			return true;
 		}
