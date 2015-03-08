@@ -1,5 +1,6 @@
 package com.ant.crawler.core;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
@@ -163,7 +164,6 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 				doExtThing(entity, htmlDom);
 			}
 		}
-		duplicateChecker.save();
 	}
 
 
@@ -198,6 +198,11 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 	@Override
 	public void shutdown() {
 		shutdowned = true;
+		try {
+			duplicateChecker.save();
+		} catch (IOException e) {
+			logger.error("can't save visited urls: " + conf.get(PrismConstants.PLUGIN_ID), e);
+		}
 	}
 
 	@Override
