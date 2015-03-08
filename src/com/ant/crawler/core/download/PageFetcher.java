@@ -141,5 +141,9 @@ public class PageFetcher {
 		URL distURL = new URL(origURL, anchor.getHrefAttribute());
 		return retrieve(distURL);
 	}
-
+	
+	public static HtmlPage click(HtmlPage page, String xpath) throws IOException {
+		HtmlAnchor anchor = (HtmlAnchor) page.getFirstByXPath(xpath);
+		return (anchor != null) ? anchor.<HtmlPage>click() : null;
+	}
 }

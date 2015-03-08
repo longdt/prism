@@ -2,7 +2,6 @@ package com.ant.crawler.core;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,18 +17,16 @@ import com.ant.crawler.core.conf.Configuration;
 import com.ant.crawler.core.conf.PrismConfiguration;
 import com.ant.crawler.core.conf.entity.Category;
 import com.ant.crawler.core.conf.entity.EntityConf;
-import com.ant.crawler.core.conf.entity.Expand;
 import com.ant.crawler.core.content.relate.DuplicateChecker;
 import com.ant.crawler.core.download.PageFetcher;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.entity.EntityBuilderFactory;
-import com.ant.crawler.core.parse.WrapperFactory;
+import com.ant.crawler.core.parse.DetailExtractor;
 import com.ant.crawler.core.utils.PrismConstants;
 import com.ant.crawler.dao.Persistencer;
 import com.ant.crawler.dao.dyna.DynaPersistencer;
 import com.ant.crawler.plugins.Crawler;
 import com.ant.crawler.plugins.Wrapper;
-import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public abstract class AbstractCrawler implements Crawler, Configurable {
@@ -44,19 +41,16 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 	protected Configuration conf;
 	protected EntityConf entityConf;
 	protected URL homeSite;
-	protected Wrapper detailWrapper;
-	private List<Expand> expands;
-	private List<Wrapper> expandWrappers;
 	protected Persistencer persistencer;
 	protected DuplicateChecker duplicateChecker;
 	protected EntityBuilderFactory factory;
 	protected String categoryFieldName;
 	protected String idField;
 	private long sleepMillisTime;
+	private DetailExtractor extractor;
 
 	public AbstractCrawler() {
 		pageFetcher = new PageFetcher();
-		expandWrappers = new ArrayList<Wrapper>();
 	}
 
 	@Override
@@ -66,12 +60,7 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 			pageFetcher.init(conf);
 		}
 		this.entityConf = entityConf;
-		this.detailWrapper = wrapper;
-		expands = entityConf.getEntityFields().getDetailSite().getExpand();
-		Class<Wrapper> wrapperClass = (Class<Wrapper>) wrapper.getClass();
-		for (Expand expand : expands) {
-			expandWrappers.add(WrapperFactory.createWrapper(wrapperClass, conf, expand.getField()));
-		}
+		extractor = new DetailExtractor(wrapper, conf, entityConf.getEntityFields().getDetailSite());
 		this.persistencer = persistencer;
 		String pluginDir = conf.get(PrismConstants.PLUGIN_DIR);
 		int maxUrlCheck = PrismConfiguration.getInstance().getInt(PrismConstants.ENTITY_DUPLICATE_MAXURL, 0);
@@ -110,7 +99,7 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 			String tableName = entityClass.substring("dyna#".length());
 			DynaClass dynaClass = ((DynaPersistencer) persistencer).createClass(tableName);
 			DynaClass subEClass = null;
-			if (subentityClass.startsWith("dyna#")) {
+			if (subentityClass != null && subentityClass.startsWith("dyna#")) {
 				tableName = subentityClass.substring("dyna#".length());
 				subEClass = ((DynaPersistencer) persistencer).createClass(tableName);
 			}
@@ -163,8 +152,7 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 				}
 				entity.setSourceUrl(detailURL);
 				htmlDom = pageFetcher.retrieve(detailURL);
-				if (htmlDom == null || !detailWrapper.extract(htmlDom, entity)
-								|| !expand(entity, htmlDom)) {
+				if (htmlDom == null || !extractor.extract(htmlDom, entity)) {
 					continue;
 				}
 			}
@@ -181,39 +169,6 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 
 	protected void doExtThing(EntityBuilder entity, HtmlPage htmlDom) {
 		
-	}
-
-	protected boolean expand(EntityBuilder entity, DomNode htmlDom) {
-		if (expandWrappers.isEmpty()) {
-			return true;
-		}
-		DomNode expandPage = null;
-		URL url = null;
-		URL origURL = entity.getSourceUrl();
-		for (int i = 0, n = expands.size(); i < n; ++i) {
-			Wrapper wrapper = expandWrappers.get(i);
-			Expand expand = expands.get(i);
-			try {
-				url = getExpandUrl(origURL, htmlDom, expand.getLink());
-				expandPage = pageFetcher.retrieve(url);
-				entity.setSourceUrl(url);
-				if (!wrapper.extract(expandPage, entity) && expand.isRequired()) {
-					return false;
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				if (expand.isRequired()) {
-					return false;
-				}
-			}
-		}
-		entity.setSourceUrl(origURL);
-		return true;
-	}
-
-	private URL getExpandUrl(URL url, DomNode htmlDom, String linkXpath) throws MalformedURLException {
-		 List<DomNode> itemNode = (List<DomNode>) htmlDom.getByXPath(linkXpath);
-		 return (itemNode != null && !itemNode.isEmpty()) ? new URL(url, itemNode.get(0).getNodeValue()) : null;
 	}
 
 	/**

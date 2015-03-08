@@ -18,13 +18,15 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 	private String navigateXpath;
 	private boolean noDetailSite;
 	private DetailExtractor extractor;
+
 	@Override
 	public void init(EntityConf entityConf, Wrapper detailWrapper,
 			Persistencer persistencer) throws Exception {
 		super.init(entityConf, detailWrapper, persistencer);
 		SubEntity subentity = entityConf.getEntityFields().getSubEntity();
 		navigateXpath = subentity.getLink();
-		extractor = new DetailExtractor(detailWrapper, conf, subentity.getDetailSite());
+		extractor = new DetailExtractor(detailWrapper, conf,
+				subentity.getDetailSite());
 		noDetailSite = subentity.getDetailSite().getField().isEmpty();
 	}
 
@@ -58,7 +60,10 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 					continue;
 				}
 				detailURL = sub.getDetailUrl();
-				if (!noDetailSite && (detailURL == null || extractor.extract(detailURL, sub))) {
+				if (!noDetailSite
+						&& (detailURL == null
+								|| (htmlDom = pageFetcher.retrieve(detailURL)) == null || extractor
+									.extract(htmlDom, sub))) {
 					continue;
 				}
 				persistencer.store(sub, "id");
@@ -69,5 +74,6 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 		}
 	}
 
-	protected abstract void createSubEntity(HtmlPage htmlDom, EntityBuilder entity);
+	protected abstract void createSubEntity(HtmlPage htmlDom,
+			EntityBuilder entity);
 }

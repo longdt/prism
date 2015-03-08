@@ -68,48 +68,45 @@ public class MainExecutor {
 			try {
 				if ((allowAll || whileList.contains(plugin.getName())) && !blackList.contains(plugin.getName()))
 					loadPlugin(plugin);
-			} catch (PluginException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				logger.error("Can't load plugin/site: " + plugin.getName(), e);
 			}
 		}
 	}
 
-	private void loadPlugin(File pluginDir) throws PluginException {
-		try {
-			EntityConf entityConf = loadEntityConf(pluginDir);
-			if (entityConf == null) {
-				return;
-			}
-			Configuration conf = loadConf(pluginDir);
-			File[] list = pluginDir.listFiles(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.endsWith(".jar");
-				}
-			});
-			for (File file : list) {
-				ClassPathHacker.addFile(file);
-			}
-			String backend = entityConf.getBackend();
-			if (backend == null || backend.trim().isEmpty()) {
-				backend = SimpleRssCrawler.class.getName();
-			}
-
-			Wrapper wrapper = new XPathWrapper();
-			if (wrapper instanceof Configurable) {
-				((Configurable) wrapper).setConf(conf);
-			}
-
-			Crawler crawler = (Crawler) Class.forName(backend).newInstance();
-			if (crawler instanceof Configurable) {
-				((Configurable) crawler).setConf(conf);
-			}
-
-			wrapper.init(entityConf.getEntityFields().getDetailSite().getField());
-			crawler.init(entityConf, wrapper, persistencer);
-			workers.add(new Worker(crawler));
-		} catch (Exception e) {
+	private void loadPlugin(File pluginDir) throws Exception {
+		EntityConf entityConf = loadEntityConf(pluginDir);
+		if (entityConf == null) {
+			return;
 		}
+		Configuration conf = loadConf(pluginDir);
+		File[] list = pluginDir.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".jar");
+			}
+		});
+		for (File file : list) {
+			ClassPathHacker.addFile(file);
+		}
+		String backend = entityConf.getBackend();
+		if (backend == null || backend.trim().isEmpty()) {
+			backend = SimpleRssCrawler.class.getName();
+		}
+		
+		Wrapper wrapper = new XPathWrapper();
+		if (wrapper instanceof Configurable) {
+			((Configurable) wrapper).setConf(conf);
+		}
+		
+		Crawler crawler = (Crawler) Class.forName(backend).newInstance();
+		if (crawler instanceof Configurable) {
+			((Configurable) crawler).setConf(conf);
+		}
+		
+		wrapper.init(entityConf.getEntityFields().getDetailSite().getField());
+		crawler.init(entityConf, wrapper, persistencer);
+		workers.add(new Worker(crawler));
 	}
 
 	private Configuration loadConf(File pluginDir) {
