@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -17,10 +16,6 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-
-import net.xeoh.plugins.base.PluginManager;
-import net.xeoh.plugins.base.impl.PluginManagerFactory;
-import net.xeoh.plugins.base.util.uri.ClassURI;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -86,8 +81,6 @@ public class MainExecutor {
 				return;
 			}
 			Configuration conf = loadConf(pluginDir);
-			PluginManager pluginManager = PluginManagerFactory
-					.createPluginManager();
 			File[] list = pluginDir.listFiles(new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
@@ -95,15 +88,13 @@ public class MainExecutor {
 				}
 			});
 			for (File file : list) {
-				pluginManager.addPluginsFrom(file.toURI());
 				ClassPathHacker.addFile(file);
 			}
 			String backend = entityConf.getBackend();
 			if (backend == null || backend.trim().isEmpty()) {
 				backend = SimpleRssCrawler.class.getName();
 			}
-			pluginManager.addPluginsFrom(URI.create("classpath://" + backend));
-			pluginManager.addPluginsFrom(ClassURI.PLUGIN(XPathWrapper.class));
+
 			Wrapper wrapper = new XPathWrapper();
 			if (wrapper instanceof Configurable) {
 				((Configurable) wrapper).setConf(conf);
@@ -113,7 +104,6 @@ public class MainExecutor {
 			if (crawler instanceof Configurable) {
 				((Configurable) crawler).setConf(conf);
 			}
-			pluginManager.shutdown();
 
 			wrapper.init(entityConf.getEntityFields().getDetailSite().getField());
 			crawler.init(entityConf, wrapper, persistencer);

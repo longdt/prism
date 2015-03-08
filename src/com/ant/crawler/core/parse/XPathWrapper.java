@@ -14,12 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
-
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.log4j.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -36,13 +30,11 @@ import com.ant.crawler.plugins.Wrapper;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 
-@PluginImplementation
 public class XPathWrapper implements Wrapper, Configurable {
 	private static final Logger logger = Logger.getLogger(XPathWrapper.class);
 	private static final String IMG_TAG = "img";
 	private static final String A_TAG = "a";
 	private static final String SCRIPT_TAG = "script";
-	private XPath xpath;
 	private Configuration conf;
 	private List<Field> fields;
 	private boolean autoThumbnail;
@@ -65,7 +57,6 @@ public class XPathWrapper implements Wrapper, Configurable {
 	}
 
 	public XPathWrapper() {
-		xpath = XPathFactory.newInstance().newXPath();
 		filterOne = new HashMap<String, List<FilterEngine>>();
 		filterAll = new HashMap<String, List<FilterEngine>>();
 	}

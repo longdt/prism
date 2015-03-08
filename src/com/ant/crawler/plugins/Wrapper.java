@@ -2,13 +2,11 @@ package com.ant.crawler.plugins;
 
 import java.util.List;
 
-import net.xeoh.plugins.base.Plugin;
-
 import com.ant.crawler.core.conf.entity.Field;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 
-public interface Wrapper extends Plugin {
+public interface Wrapper {
 		
 	public void init(List<Field> fields);
 	

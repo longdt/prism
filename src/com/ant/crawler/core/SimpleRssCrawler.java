@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.beanutils.BeanUtils;
 
 import com.ant.crawler.core.conf.entity.EntityConf;
@@ -31,7 +29,6 @@ import com.rometools.rome.feed.synd.SyndEntry;
  * @author thienlong
  * 
  */
-@PluginImplementation
 public class SimpleRssCrawler extends AbstractRssCrawler {
 	private Map<String, List<FilterEngine>> filterAll;
 	private List<MappingField> fields;

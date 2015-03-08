@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import com.ant.crawler.core.conf.entity.EntityConf;
 import com.ant.crawler.core.conf.entity.Field;
 import com.ant.crawler.core.entity.EntityBuilder;
@@ -17,7 +15,6 @@ import com.ant.crawler.dao.Persistencer;
 import com.ant.crawler.plugins.Wrapper;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 
-@PluginImplementation
 public class ListSiteCrawler extends AbstractCrawler {
 	protected URL currSourceUrl;
 	protected Integer currCat;
