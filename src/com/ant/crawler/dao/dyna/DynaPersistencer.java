@@ -17,7 +17,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.beanutils.DynaClass;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.ddlutils.DatabaseOperationException;
 import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.PlatformFactory;

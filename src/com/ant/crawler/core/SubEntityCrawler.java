@@ -64,6 +64,7 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 						&& (detailURL == null
 								|| (htmlDom = pageFetcher.retrieve(detailURL)) == null || extractor
 									.extract(htmlDom, sub))) {
+					subIter.remove();
 					continue;
 				}
 				persistencer.store(sub, "id");
