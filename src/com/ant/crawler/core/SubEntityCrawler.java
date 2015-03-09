@@ -33,13 +33,11 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 	@Override
 	protected void doExtThing(EntityBuilder entity, HtmlPage htmlDom) {
 		if (navigateXpath != null) {
-			try {
-				htmlDom = pageFetcher.navigate(htmlDom, navigateXpath);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			htmlDom = pageFetcher.navigate(htmlDom, navigateXpath);
 		}
-		loadSubEntities(htmlDom, entity);
+		if (htmlDom != null) {
+			loadSubEntities(htmlDom, entity);
+		}
 	}
 
 	protected void loadSubEntities(HtmlPage htmlDom, EntityBuilder entity) {

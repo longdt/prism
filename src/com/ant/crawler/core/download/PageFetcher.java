@@ -12,7 +12,6 @@ import com.ant.crawler.core.utils.PrismConstants;
 import com.gargoylesoftware.htmlunit.CookieManager;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.Cookie;
@@ -135,11 +134,16 @@ public class PageFetcher {
 		return null;
 	}
 	
-	public HtmlPage navigate(HtmlPage page, String xpath) throws IOException {
+	public HtmlPage navigate(HtmlPage page, String xpath) {
 		HtmlAnchor anchor = (HtmlAnchor) page.getFirstByXPath(xpath);
 		URL origURL = page.getUrl();
-		URL distURL = new URL(origURL, anchor.getHrefAttribute());
-		return retrieve(distURL);
+		try {
+			URL distURL = new URL(origURL, anchor.getHrefAttribute());
+			return client.getPage(distURL);
+		} catch (FailingHttpStatusCodeException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public static HtmlPage click(HtmlPage page, String xpath) throws IOException {

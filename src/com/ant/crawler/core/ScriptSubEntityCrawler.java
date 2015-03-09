@@ -34,6 +34,9 @@ public class ScriptSubEntityCrawler extends SubEntityCrawler {
 			return;
 		}
 		List<DomNode> itemNode = (List<DomNode>) htmlDom.getByXPath(xpath);
+		if (itemNode == null || itemNode.isEmpty()) {
+			return;
+		}
 		for (DomNode node : itemNode) {
 			engine.refine(node.getNodeValue(), entity, node);
 		}
