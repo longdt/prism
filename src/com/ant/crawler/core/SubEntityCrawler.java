@@ -3,13 +3,14 @@ package com.ant.crawler.core;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import com.ant.crawler.core.conf.entity.EntityConf;
 import com.ant.crawler.core.conf.entity.SubEntity;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.parse.DetailExtractor;
+import com.ant.crawler.core.parse.WrapperFactory;
 import com.ant.crawler.core.utils.PrismConstants;
 import com.ant.crawler.dao.Persistencer;
 import com.ant.crawler.plugins.Wrapper;
@@ -27,6 +28,7 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 		super.init(entityConf, detailWrapper, persistencer);
 		SubEntity subentity = entityConf.getEntityFields().getSubEntity();
 		navigateXpath = subentity.getLink();
+		detailWrapper = WrapperFactory.createWrapper(detailWrapper.getClass(), conf);
 		extractor = new DetailExtractor(detailWrapper, conf,
 				subentity.getDetailSite());
 		noDetailSite = subentity.getDetailSite().getField().isEmpty();
@@ -50,7 +52,7 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 
 	protected void loadSubEntities(HtmlPage htmlDom, EntityBuilder entity) throws IllegalAccessException, InvocationTargetException {
 		createSubEntity(htmlDom, entity);
-		List<EntityBuilder> subEntities = entity.getSubEntities();
+		Collection<EntityBuilder> subEntities = entity.getSubEntities();
 		if (subEntities == null) {
 			return;
 		}
@@ -69,7 +71,7 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 				detailURL = sub.getDetailUrl();
 				if (!noDetailSite
 						&& (detailURL == null
-								|| (htmlDom = pageFetcher.retrieve(detailURL)) == null || extractor
+								|| (htmlDom = pageFetcher.retrieve(detailURL)) == null || !extractor
 									.extract(htmlDom, sub))) {
 					subIter.remove();
 					continue;

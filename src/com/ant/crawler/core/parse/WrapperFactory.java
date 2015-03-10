@@ -23,4 +23,12 @@ public class WrapperFactory {
 		wrapper.init(fields);
 		return wrapper;
 	}
+
+	public static Wrapper createWrapper(Class<? extends Wrapper> wrapperClass, Configuration conf) throws InstantiationException, IllegalAccessException {
+		Wrapper wrapper = wrapperClass.newInstance();
+		if (wrapper instanceof Configurable) {
+			((Configurable) wrapper).setConf(conf);
+		}
+		return wrapper;
+	}
 }

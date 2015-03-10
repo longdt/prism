@@ -19,9 +19,8 @@ public class ListSiteCrawler extends AbstractCrawler {
 	protected URL currSourceUrl;
 	protected Integer currCat;
 	protected int index = -1;
-	protected List<DomNode> currentList;
+	private List<DomNode> currentList;
 	private String itemXpath;
-	private List<Field> fields;
 	private Wrapper listWrapper;
 	private boolean noDetailSite;
 	
@@ -30,7 +29,7 @@ public class ListSiteCrawler extends AbstractCrawler {
 			Persistencer persistencer) throws Exception {
 		super.init(entityConf, detailWrapper, persistencer);
 		itemXpath = entityConf.getEntityFields().getListSite().getItemXpath();
-		fields = entityConf.getEntityFields().getListSite().getField();
+		List<Field> fields = entityConf.getEntityFields().getListSite().getField();
 		listWrapper = WrapperFactory.createDefaultWrapper(conf, fields);
 		noDetailSite = entityConf.getEntityFields().getDetailSite().getField().isEmpty();
 	}

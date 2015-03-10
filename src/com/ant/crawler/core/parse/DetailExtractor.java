@@ -20,6 +20,7 @@ public class DetailExtractor {
 	
 	public DetailExtractor(Wrapper wrapper, Configuration conf, DetailSite detailConf) throws InstantiationException, IllegalAccessException {
 		this.detailWrapper = wrapper;
+		wrapper.init(detailConf.getField());
 		expands = detailConf.getExpand();
 		Class<Wrapper> wrapperClass = (Class<Wrapper>) wrapper.getClass();
 		expandWrappers = new ArrayList<Wrapper>();

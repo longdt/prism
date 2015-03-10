@@ -104,7 +104,6 @@ public class MainExecutor {
 			((Configurable) crawler).setConf(conf);
 		}
 		
-		wrapper.init(entityConf.getEntityFields().getDetailSite().getField());
 		crawler.init(entityConf, wrapper, persistencer);
 		workers.add(new Worker(crawler));
 	}

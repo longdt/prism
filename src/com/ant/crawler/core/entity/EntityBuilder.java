@@ -3,10 +3,11 @@ package com.ant.crawler.core.entity;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -19,7 +20,7 @@ public class EntityBuilder {
 	private URL sourceUrl;
 	private URL detailUrl;
 	private EntityBuilder parrent;
-	private List<EntityBuilder> subEntities;
+	private Set<EntityBuilder> subEntities;
 	private EntityBuilderFactory factory;
 	private String subID;
 	private String idField;
@@ -67,7 +68,7 @@ public class EntityBuilder {
 		}
 		EntityBuilder builder = factory.newSubEntityBuilder();
 		if (subEntities == null) {
-			subEntities = new ArrayList<>();
+			subEntities = new LinkedHashSet<>();
 		}
 		builder.parrent = this;
 		subEntities.add(builder);
@@ -101,12 +102,8 @@ public class EntityBuilder {
 		return indexDatas;
 	}
 
-	public List<EntityBuilder> getSubEntities() {
+	public Set<EntityBuilder> getSubEntities() {
 		return subEntities;
-	}
-
-	public void setSubEntities(List<EntityBuilder> subEntities) {
-		this.subEntities = subEntities;
 	}
 
 	public String getSubID() {
@@ -130,5 +127,9 @@ public class EntityBuilder {
 		}
 		//never occur
 		return null;
+	}
+
+	public void remove() {
+		parrent.subEntities.remove(this);
 	}
 }
