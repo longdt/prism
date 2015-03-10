@@ -85,6 +85,7 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 		persistencer.store(entity);
 		Object id = entity.getID();
 		if (id != null) {
+			duplicateChecker.accept(entity.getDetailUrl());
 			for (EntityBuilder sub : subEntities) {
 				sub.set(parrentIDField, id);
 				persistencer.store(sub);
