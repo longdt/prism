@@ -15,12 +15,12 @@ import javax.sql.DataSource;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.beanutils.DynaClass;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.ddlutils.DatabaseOperationException;
 import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.PlatformFactory;
+import org.apache.ddlutils.dynabean.SqlDynaClass;
 import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
 
@@ -117,7 +117,7 @@ public class DynaPersistencer extends BasePersistencer {
 		}
 	}
 
-	public DynaClass createClass(String tableName) {
+	public SqlDynaClass createClass(String tableName) {
 		return database.getDynaClassFor(tableName);
 	}
 

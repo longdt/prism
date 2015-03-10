@@ -22,13 +22,15 @@ public class EntityBuilder {
 	private List<EntityBuilder> subEntities;
 	private EntityBuilderFactory factory;
 	private String subID;
+	private String idField;
 	
-	EntityBuilder(Object entity) {
-		this(entity, null);
+	EntityBuilder(Object entity, String idField) {
+		this(entity, idField, null);
 	}
 	
-	EntityBuilder(Object entity, EntityBuilderFactory factory) {
+	EntityBuilder(Object entity, String idField, EntityBuilderFactory factory) {
 		this.entity = entity;
+		this.idField = idField;
 		this.factory = factory;
 		indexDatas = new ArrayList<String>();
 		downloadImgs = new HashMap<URL, String>();
@@ -113,5 +115,20 @@ public class EntityBuilder {
 	
 	public void setSubID(String subID) {
 		this.subID = subID;
+	}
+
+	public String getIDField() {
+		return idField;
+	}
+
+	public Object getID() {
+		try {
+			return get(idField);
+		} catch (IllegalAccessException | InvocationTargetException
+				| NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		//never occur
+		return null;
 	}
 }

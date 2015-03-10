@@ -1,6 +1,6 @@
 package com.ant.crawler.core;
 
-import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
@@ -10,6 +10,7 @@ import com.ant.crawler.core.conf.entity.EntityConf;
 import com.ant.crawler.core.conf.entity.SubEntity;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.parse.DetailExtractor;
+import com.ant.crawler.core.utils.PrismConstants;
 import com.ant.crawler.dao.Persistencer;
 import com.ant.crawler.plugins.Wrapper;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -18,6 +19,7 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 	private String navigateXpath;
 	private boolean noDetailSite;
 	private DetailExtractor extractor;
+	private String parrentIDField;
 
 	@Override
 	public void init(EntityConf entityConf, Wrapper detailWrapper,
@@ -28,10 +30,16 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 		extractor = new DetailExtractor(detailWrapper, conf,
 				subentity.getDetailSite());
 		noDetailSite = subentity.getDetailSite().getField().isEmpty();
+		parrentIDField = conf.get(PrismConstants.SUB_ENTITY_PARRENTID_FIELD);
+	}
+	
+	@Override
+	protected boolean needDoExtThing() {
+		return true;
 	}
 
 	@Override
-	protected void doExtThing(EntityBuilder entity, HtmlPage htmlDom) {
+	protected void doExtThing(EntityBuilder entity, HtmlPage htmlDom) throws Exception {
 		if (navigateXpath != null) {
 			htmlDom = pageFetcher.navigate(htmlDom, navigateXpath);
 		}
@@ -40,7 +48,7 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 		}
 	}
 
-	protected void loadSubEntities(HtmlPage htmlDom, EntityBuilder entity) {
+	protected void loadSubEntities(HtmlPage htmlDom, EntityBuilder entity) throws IllegalAccessException, InvocationTargetException {
 		createSubEntity(htmlDom, entity);
 		List<EntityBuilder> subEntities = entity.getSubEntities();
 		if (subEntities == null) {
@@ -48,11 +56,12 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 		}
 		Iterator<EntityBuilder> subIter = subEntities.iterator();
 		URL detailURL = null;
+		URL checkURL = null;
 		while (subIter.hasNext()) {
 			EntityBuilder sub = subIter.next();
 			String subId = sub.getSubID();
 			try {
-				URL checkURL = new URL(entity.getDetailUrl(), "#" + subId);
+				checkURL = new URL(entity.getDetailUrl(), "#" + subId);
 				if (duplicateChecker.test(checkURL)) {
 					subIter.remove();
 					continue;
@@ -65,10 +74,21 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 					subIter.remove();
 					continue;
 				}
-				persistencer.store(sub, "id");
-				duplicateChecker.accept(checkURL);
+				sub.setDetailUrl(checkURL);
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
+			}
+		}
+		if (subEntities.isEmpty()) {
+			return;
+		}
+		persistencer.store(entity);
+		Object id = entity.getID();
+		if (id != null) {
+			for (EntityBuilder sub : subEntities) {
+				sub.set(parrentIDField, id);
+				persistencer.store(sub);
+				duplicateChecker.accept(sub.getDetailUrl());
 			}
 		}
 	}

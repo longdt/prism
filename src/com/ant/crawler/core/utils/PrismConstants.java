@@ -34,8 +34,6 @@ public class PrismConstants {
 	
 	public static final String CRAWL_CYCLE_MILLISTIME = "crawler.cycle.millistime";
 	
-	public static final String CRAWL_DEBUG_MODE = "crawler.debug.mode";
-	
 	public static final String CRAWL_PLUGIN_WHITELIST = "crawler.plugin.whitelist";
 	
 	public static final String CRAWL_PLUGIN_BLACKLIST = "crawler.plugin.blacklist";
@@ -78,7 +76,7 @@ public class PrismConstants {
 
 	public static final String ENTITY_THUMBNAIL_FIELD = "entity.thumbnail.field";
 
-	public static final String ENTITY_ID_FIELD = "entity.id.field";
+	public static final String SUB_ENTITY_PARRENTID_FIELD = "subentity.parrentid.field";
 	
 	public static final String ENTITY_PUBDATE_USING_CRAWLTIME = "entity.pubdate.using.crawltime";
 	

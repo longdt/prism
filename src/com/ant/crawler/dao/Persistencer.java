@@ -4,7 +4,7 @@ import com.ant.crawler.core.entity.EntityBuilder;
 
 public interface Persistencer {
 	
-	public void store(EntityBuilder entity, String pkField);
+	public void store(EntityBuilder entity);
 	
 	public void close();
 	

@@ -55,13 +55,13 @@ public abstract class BasePersistencer implements Persistencer {
 	}
 
 	@Override
-	public void store(EntityBuilder entity, String pkField) {
+	public void store(EntityBuilder entity) {
 		try {
 			long entityID = -1;
 			synchronized (this) {
 				List<DocSimilar> relateNews = relation.relate(entity);
 				if (relateNews != null) {
-					entityID = insertEntity(entity.getEntity(), relateNews, pkField);
+					entityID = insertEntity(entity.getEntity(), relateNews, entity.getIDField());
 				}
 				if (entityID != -1) {
 					relation.storeCurrEntityWithID(entityID);
