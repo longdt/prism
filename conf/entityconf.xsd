@@ -36,6 +36,8 @@
 						<xs:restriction base="xs:string">
 							<xs:enumeration value="scriptone"></xs:enumeration>
 							<xs:enumeration value="scriptall"></xs:enumeration>
+							<xs:enumeration value="regexone"></xs:enumeration>
+							<xs:enumeration value="regexall"></xs:enumeration>
 						</xs:restriction>
 					</xs:simpleType>
 				</xs:attribute>
