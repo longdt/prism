@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<entityConf xsi:noNamespaceSchemaLocation="../../conf/entityconf.xsd"
+<entityConf xsi:noNamespaceSchemaLocation="../../entityconf.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backend="com.ant.crawler.core.ListSiteCrawler">
 
 	<entityFields>
@@ -7,6 +7,9 @@
 		</rssSite>
 		<listSite>
 			<itemXpath>//div[@id='content']/div[starts-with(@class, 'post')]</itemXpath>
+			<field xpath="div/a/div[@class='post-info-wrap clearfix']/span[@class='mvif vid-hd']/text()" name="filter_quality">
+				<filter type="scriptone"><![CDATA[ if (!field.equals("HD")) field = null;]]></filter>
+			</field>
 			<field xpath="div/a/@href" name="tempSource">
 				<filter type="scriptone">
 					<![CDATA[
@@ -32,12 +35,17 @@
 			</field>
 		</listSite>
 		<detailSite>
-			<field xpath="//div[@class='movie-info']/h1/text()" name="title"></field>
+			<field xpath="//div[@class='movie-info']/h1/text() | //div[@class='movie-info']/p[@class='grtx']/text()" name="title">
+				<filter type="regexall" replace=" - ">\n</filter>
+			</field>
 			<field xpath="//div[@class='movie-content clearfix']/*" name="description" required="false"></field>
 			<field xpath="//div[@class='movie-info']/p[text()='Thể loại: ']/span/a/text()" name="tags"  required="false">
+				<filter type="regexone" replace="Hàn Quốc">Hàn Quốc HD</filter>
+				<filter type="regexone" replace="Hài Hước">Phim Hài</filter>
+				<filter type="regexone" replace="Hoạt Hình">Phim Hoạt Hình HD</filter>
 				<filter type="regexall" replace=", ">\n</filter>
 			</field>
-			<expand link="//div[@class='movie-info']/div[@class='movie-button clear']/a/@href">
+			<expand link="//div[@class='movie-info']/div[@class='movie-button clear']/a">
 				<field
 				xpath="//div[@id='severlist']/script[@type='text/javascript']/text()" name="embed_web">
 					<filter type="scriptone">
@@ -48,12 +56,20 @@
 								return;
 							}
 							field = field.substring(index + 6, field.length() - 1);
-							java.lang.System.out.println(field);
+							
 							var movies = JSON.parse(field);
 							var decoder = java.util.Base64.getUrlDecoder();
 							var movie = movies[movies.length - 1];
 							if (movie.name == "Xem Full" || movies.length == 1) {
-								field = new java.lang.String(decoder.decode(movie.link));
+								var IOUtils = Java.type("org.apache.commons.io.IOUtils");
+								var URL = Java.type("java.net.URL");
+								var state = IOUtils.toString(new URL("http://sharephim.vn/get_picasa/0/" + movie.link));
+								java.lang.System.out.println(state);
+								if (state.length() < 10) {
+									field = null;
+								} else {
+									field = new java.lang.String(decoder.decode(movie.link));
+								}
 							} else {
 								field = null;
 							}

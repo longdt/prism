@@ -9,10 +9,6 @@
 		<value>dyna#movie</value>
 	</property>
 	<property>
-		<name>entity.id.field</name>
-		<value>id</value>
-	</property>
-	<property>
 		<name>entity.thumbnail.field</name>
 		<value>thumbnail</value>
 	</property>

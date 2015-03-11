@@ -13,8 +13,8 @@
 		<value>dyna#movie</value>
 	</property>
 	<property>
-		<name>entity.id.field</name>
-		<value>id</value>
+		<name>subentity.parrentid.field</name>
+		<value>parrent</value>
 	</property>
 	<property>
 		<name>entity.thumbnail.field</name>

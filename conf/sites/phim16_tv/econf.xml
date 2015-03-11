@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<entityConf xsi:noNamespaceSchemaLocation="../../conf/entityconf.xsd"
+<entityConf xsi:noNamespaceSchemaLocation="../../entityconf.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backend="com.ant.crawler.core.ScriptSubEntityCrawler">
 
 	<entityFields>
@@ -7,6 +7,9 @@
 		</rssSite>
 		<listSite>
 			<itemXpath>//div[@id='content']/div[starts-with(@class, 'post')]</itemXpath>
+			<field xpath="div/a/div[@class='post-info-wrap clearfix']/span[@class='mvif vid-hd']/text()" name="filter_quality">
+				<filter type="scriptone"><![CDATA[ if (!field.equals("HD")) field = null;]]></filter>
+			</field>
 			<field xpath="div/a/@href" name="tempSource">
 				<filter type="scriptone">
 					<![CDATA[
@@ -32,9 +35,14 @@
 			</field>
 		</listSite>
 		<detailSite>
-			<field xpath="//div[@class='movie-info']/h1/text()" name="title"></field>
+			<field xpath="//div[@class='movie-info']/h1/text() | //div[@class='movie-info']/p[@class='grtx']/text()" name="title">
+				<filter type="regexall" replace=" - ">\n</filter>
+			</field>
 			<field xpath="//div[@class='movie-content clearfix']/*" name="description" required="false"></field>
 			<field xpath="//div[@class='movie-info']/p[text()='Thể loại: ']/span/a/text()" name="tags"  required="false">
+				<filter type="regexone" replace="Hàn Quốc">Hàn Quốc HD</filter>
+				<filter type="regexone" replace="Hài Hước">Phim Hài</filter>
+				<filter type="regexone" replace="Hoạt Hình">Phim Hoạt Hình HD</filter>
 				<filter type="regexall" replace=", ">\n</filter>
 			</field>
 		</detailSite>
@@ -63,7 +71,6 @@
 										var subEntity = entity.newSubEntity();
 										subEntity.set("title", movie.name);
 										subEntity.set("embed_web", field);
-										subEntity.set("parrent", entity.get("id"));
 										subEntity.setSubID(movie.name);
 										subEntity.set("view", 0);
 									}
@@ -77,6 +84,7 @@
 	</entityFields>
 	<categories mappingField="category_id">
 		<category id="1">
+			http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/2/
 			http://phim16.com/xem/tag/phim-bo-hoan-thanh/
 		</category>
 	</categories>
