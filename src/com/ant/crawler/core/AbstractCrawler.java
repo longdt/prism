@@ -215,14 +215,17 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 			Iterator<Entry<URL, Integer>> urlCatsIter)
 			throws NoSuchElementException;
 
-	@Override
-	public void shutdown() {
-		shutdowned = true;
+	public void saveState() {
 		try {
 			duplicateChecker.save();
 		} catch (IOException e) {
 			logger.error("can't save visited urls: " + conf.get(PrismConstants.PLUGIN_ID), e);
 		}
+	}
+	
+	@Override
+	public void shutdown() {
+		shutdowned = true;
 	}
 
 	@Override

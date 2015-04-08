@@ -14,6 +14,8 @@ public interface Crawler {
 	
 	public boolean crawl(URL detailURL, EntityBuilder entity);
 	
+	public void saveState();
+	
 	public void shutdown();
 	
 	public boolean isShutdowned();

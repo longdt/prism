@@ -35,7 +35,7 @@ import com.ant.crawler.plugins.Wrapper;
 
 public class WatchService {
 	private static BlockingQueue<Pair<String, EntityBuilder>> queue = new LinkedBlockingQueue<>();
-	private static Thread worker = new Watcher();
+	private static Watcher worker = new Watcher();
 
 	public static void add(String pluginID, EntityBuilder entity) {
 		queue.offer(Pair.of(pluginID, entity));
@@ -48,6 +48,7 @@ public class WatchService {
 		EntityBuilderFactory factory = crawler.getEntityBuilderFactory();
 		String parrentIDField = conf.get(PrismConstants.SUB_ENTITY_PARRENTID_FIELD);
 		String pluginID = conf.get(PrismConstants.PLUGIN_ID);
+		worker.addCrawlerMeta(conf, crawler.getEntityConf());
 		try (BufferedReader in = new BufferedReader(new FileReader(pluginDir + "/watched.dat"))) {
 			String line = null;
 			while ((line = in.readLine()) != null) {
@@ -93,17 +94,6 @@ public class WatchService {
 		public void addCrawlerMeta(Configuration conf, EntityConf entityConf) {
 			crawlerMetas.add(Pair.of(conf, entityConf));
 		}
-		
-		@Override
-		public synchronized void start() {
-			try {
-				loadMetas();
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
-			super.start();
-		}
 
 		private void loadMetas() throws Exception {
 			for (Pair<Configuration, EntityConf> meta : crawlerMetas) {
@@ -136,6 +126,7 @@ public class WatchService {
 		@Override
 		public void run() {
 			try {
+				loadMetas();
 				Pair<String, EntityBuilder> pair = null;
 				AbstractCrawler crawler = null;
 				while (true) {
@@ -159,6 +150,7 @@ public class WatchService {
 						}
 					}
 				}
+			} catch (InterruptedException e) {
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {

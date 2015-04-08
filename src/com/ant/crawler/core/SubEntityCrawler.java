@@ -60,7 +60,7 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 		}
 	}
 
-	protected void loadSubEntities(HtmlPage htmlDom, EntityBuilder entity) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	protected void loadSubEntities(HtmlPage htmlDom, EntityBuilder entity) throws Exception {
 		createSubEntity(htmlDom, entity);
 		Collection<EntityBuilder> subEntities = entity.getSubEntities();
 		if (subEntities == null) {
@@ -69,6 +69,9 @@ public abstract class SubEntityCrawler extends ListSiteCrawler {
 		Iterator<EntityBuilder> subIter = subEntities.iterator();
 		URL detailURL = null;
 		while (subIter.hasNext()) {
+			if (Thread.interrupted()) {
+        		throw new InterruptedException();
+        	}
 			EntityBuilder sub = subIter.next();
 			if (sub.get(parrentIDField) != null)
 				continue;
