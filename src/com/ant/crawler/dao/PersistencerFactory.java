@@ -8,22 +8,22 @@ import com.ant.crawler.dao.dyna.DynaPersistencer;
 
 
 public class PersistencerFactory {
+	private static Persistencer persistencer;
 	public static Persistencer getSqlPersistencer() {
 		return null; //new SqlPersistencer();
 	}
 	
-	public static Persistencer getDefaultPersistencer() {
+	static {
 		String backend = PrismConfiguration.getInstance().get(PrismConstants.PERSISTENCER_BACKEND);
 		if (backend == null || backend.equals("dyna")) {
 			try {
-				return new DynaPersistencer();
+				persistencer = new DynaPersistencer();
 			} catch (IOException e) {
-				e.printStackTrace();
 			}
-		} else if (backend.equals("hibernate")) {
-			return null;
 		}
-		return null;
+	}
 	
+	public static Persistencer getDefaultPersistencer() {
+		return persistencer;
 	}
 }

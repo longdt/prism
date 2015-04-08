@@ -24,6 +24,7 @@ import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.entity.EntityBuilderFactory;
 import com.ant.crawler.core.parse.DetailExtractor;
 import com.ant.crawler.core.utils.PrismConstants;
+import com.ant.crawler.core.watch.WatchService;
 import com.ant.crawler.dao.Persistencer;
 import com.ant.crawler.dao.dyna.DynaPersistencer;
 import com.ant.crawler.plugins.Crawler;
@@ -46,11 +47,10 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 	protected String categoryFieldName;
 	private long sleepMillisTime;
 	private DetailExtractor extractor;
-	private boolean extThing;
+	private String pluginID;
 
 	public AbstractCrawler() {
 		pageFetcher = new PageFetcher();
-		extThing = needDoExtThing();
 	}
 
 	@Override
@@ -59,6 +59,7 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 		if (conf != null) {
 			pageFetcher.init(conf);
 		}
+		pluginID = conf.get(PrismConstants.PLUGIN_ID);
 		this.entityConf = entityConf;
 		extractor = new DetailExtractor(wrapper, conf, entityConf.getEntityFields().getDetailSite());
 		this.persistencer = persistencer;
@@ -156,22 +157,38 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 				}
 			}
 			
-			if (extThing) {
-				doExtThing(entity, htmlDom);
-			} else {
-				persistencer.store(entity);
-				duplicateChecker.accept(detailURL);				
-			}
+			doExtThing(entity, htmlDom);
+			store(entity);
 		}
 	}
 	
-	protected boolean needDoExtThing() {
-		return false;
+	@Override
+	public boolean crawl(URL detailURL, EntityBuilder entity) {
+		entity.setSourceUrl(detailURL);
+		HtmlPage htmlDom = pageFetcher.retrieve(detailURL);
+		if (htmlDom == null || !extractor.extract(htmlDom, entity)) {
+			return false;
+		}
+		try {
+			doExtThing(entity, htmlDom);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
-
 	protected void doExtThing(EntityBuilder entity, HtmlPage htmlDom) throws Exception {
-		
+	}
+	
+	protected void store(EntityBuilder entity) throws Exception {
+		persistencer.store(entity);
+		if (entity.getID() != null) {
+			duplicateChecker.accept(entity.getDetailUrl());
+			if (entity.isWatch()) {
+				WatchService.add(pluginID, entity);
+			}
+		}
 	}
 
 	/**
@@ -225,6 +242,14 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 
 	public EntityConf getEntityConf() {
 		return entityConf;
+	}
+	
+	public Persistencer getPersistencer() {
+		return persistencer;
+	}
+	
+	public EntityBuilderFactory getEntityBuilderFactory() {
+		return factory;
 	}
 
 	public URL getHomeSite() {

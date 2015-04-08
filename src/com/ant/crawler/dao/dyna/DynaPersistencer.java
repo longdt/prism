@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 
 import com.ant.crawler.core.conf.PrismConfiguration;
 import com.ant.crawler.core.content.relate.DocSimilar;
+import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.utils.PrismConstants;
 import com.ant.crawler.dao.BasePersistencer;
 
@@ -91,7 +92,7 @@ public class DynaPersistencer extends BasePersistencer {
 		Connection connection = platform.borrowConnection();
         try
         {
-        	platform.insert(connection, database, (DynaBean)entity);
+        	platform.store(connection, database, (DynaBean)entity);
         	long pk = ((Number) PropertyUtils.getProperty(entity, pkName)).longValue();
         	if (!ENTITY_RELATE_INSERT_SQL.isEmpty()) {
         		insertRelate(connection, pk, relateEntities);
@@ -119,6 +120,50 @@ public class DynaPersistencer extends BasePersistencer {
 
 	public SqlDynaClass createClass(String tableName) {
 		return database.getDynaClassFor(tableName);
+	}
+
+	@Override
+	public boolean find(String id, EntityBuilder entity) {
+		Connection connection = platform.borrowConnection();
+        try
+        {	String idField = entity.getIDField();
+        	entity.set(idField, id);
+        	return platform.fetch(connection, database, (DynaBean) entity.getEntity());
+        } catch (Exception e) {
+			logger.error("can't insert entity: " + entity, e);
+			return false;
+		}finally
+        {
+        	platform.returnConnection(connection);
+        }
+	}
+
+	@Override
+	public boolean find(String id, String parrentIDField, EntityBuilder entity) {
+		if (!find(id, entity)) {
+			return false;
+		} else if (parrentIDField == null) {
+			return true;
+		}
+		EntityBuilder sub = entity.newSubEntity();
+		SqlDynaClass dynaClass = (SqlDynaClass) ((DynaBean) sub.getEntity()).getDynaClass();
+		String sql = "select * from " + dynaClass.getTableName() + " where " + parrentIDField + " = " + id;
+		List subs = platform.fetch(database, sql);
+		try {
+			if (subs.isEmpty()) {
+				sub.remove();
+			} else {
+				BeanUtils.copyProperties(sub.getEntity(), subs.get(0));
+				for (int i = 1; i < subs.size(); ++i) {
+					sub = entity.newSubEntity();
+					BeanUtils.copyProperties(sub.getEntity(), subs.get(i));
+				}
+			}
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }

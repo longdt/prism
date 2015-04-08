@@ -10,4 +10,8 @@ public interface Persistencer {
 	
 	public void sync();
 
+	public boolean find(String id, EntityBuilder entity);
+	
+	public boolean find(String id, String parrentIDField, EntityBuilder entity);
+
 }

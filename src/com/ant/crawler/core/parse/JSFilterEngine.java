@@ -44,16 +44,7 @@ public class JSFilterEngine implements FilterEngine {
 
 	@Override
 	public String refine(String val, EntityBuilder entity) {
-		try {
-			engine.put("field", val);
-			engine.put("replace", replace);
-			engine.put("entity", entity);
-			engine.eval(expresion);
-			return (String)engine.get("field");
-		} catch (ScriptException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return refine(val, entity, null);
 	}
 
 

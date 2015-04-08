@@ -27,10 +27,10 @@ import com.ant.crawler.core.conf.entity.EntityConf;
 import com.ant.crawler.core.parse.XPathWrapper;
 import com.ant.crawler.core.utils.ClassPathHacker;
 import com.ant.crawler.core.utils.PrismConstants;
+import com.ant.crawler.core.watch.WatchService;
 import com.ant.crawler.dao.Persistencer;
 import com.ant.crawler.dao.PersistencerFactory;
 import com.ant.crawler.plugins.Crawler;
-import com.ant.crawler.plugins.PluginException;
 import com.ant.crawler.plugins.Wrapper;
 
 public class MainExecutor {
@@ -106,6 +106,9 @@ public class MainExecutor {
 		
 		crawler.init(entityConf, wrapper, persistencer);
 		workers.add(new Worker(crawler));
+		if (crawler instanceof AbstractCrawler) {
+			WatchService.loadJobs((AbstractCrawler) crawler);
+		}
 	}
 
 	private Configuration loadConf(File pluginDir) {
@@ -139,6 +142,7 @@ public class MainExecutor {
 	}
 
 	public void execute() throws InterruptedException {
+		WatchService.start();
 		for (Worker worker : workers) {
 			executor.execute(worker);
 		}
@@ -155,6 +159,7 @@ public class MainExecutor {
 	
 	public void shutdown() {
 		executor.shutdownNow();
+		WatchService.stop();
 	}
 
 	public static void main(String[] args) throws InterruptedException, IOException {

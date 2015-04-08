@@ -3,11 +3,11 @@ package com.ant.crawler.core.entity;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -20,10 +20,12 @@ public class EntityBuilder {
 	private URL sourceUrl;
 	private URL detailUrl;
 	private EntityBuilder parrent;
-	private Set<EntityBuilder> subEntities;
+	private Map<String, EntityBuilder> subEntities;
 	private EntityBuilderFactory factory;
 	private String subID;
 	private String idField;
+	private boolean watch;
+	public Map<String, Object> tempDatas;
 	
 	EntityBuilder(Object entity, String idField) {
 		this(entity, idField, null);
@@ -35,6 +37,7 @@ public class EntityBuilder {
 		this.factory = factory;
 		indexDatas = new ArrayList<String>();
 		downloadImgs = new HashMap<URL, String>();
+		tempDatas = new HashMap<String, Object>();
 	}
 
 	public void set(String name, Object value) throws IllegalAccessException, InvocationTargetException {
@@ -67,11 +70,7 @@ public class EntityBuilder {
 			return null;
 		}
 		EntityBuilder builder = factory.newSubEntityBuilder();
-		if (subEntities == null) {
-			subEntities = new LinkedHashSet<>();
-		}
 		builder.parrent = this;
-		subEntities.add(builder);
 		return builder;
 	}
 
@@ -101,9 +100,9 @@ public class EntityBuilder {
 	public List<String> getIndexDatas() {
 		return indexDatas;
 	}
-
-	public Set<EntityBuilder> getSubEntities() {
-		return subEntities;
+	
+	public Collection<EntityBuilder> getSubEntities() {
+		return subEntities == null ? null : subEntities.values();
 	}
 
 	public String getSubID() {
@@ -111,7 +110,14 @@ public class EntityBuilder {
 	}
 	
 	public void setSubID(String subID) {
+		if (this.subID != null) {
+			return;
+		}
 		this.subID = subID;
+		if (parrent.subEntities == null) {
+			parrent.subEntities = new LinkedHashMap<>();
+		}
+		parrent.subEntities.putIfAbsent(subID, this);
 	}
 
 	public String getIDField() {
@@ -128,8 +134,18 @@ public class EntityBuilder {
 		//never occur
 		return null;
 	}
+	
+	public void setWatch(boolean watch) {
+		this.watch = watch;
+	}
+	
+	public boolean isWatch() {
+		return watch;
+	}
 
 	public void remove() {
-		parrent.subEntities.remove(this);
+		if (parrent.subEntities != null && subID != null) {
+			parrent.subEntities.remove(subID);
+		}
 	}
 }
