@@ -69,9 +69,12 @@
 										java.lang.System.out.println(state);
 										field = new java.lang.String(decoder.decode(movie.link));
 										var subEntity = entity.newSubEntity();
+										subEntity.setSubID(movie.name);
+										if (movie.name.length() == 1) {
+											movie.name = "0" + movie.name;
+										}
 										subEntity.set("title", movie.name);
 										subEntity.set("embed_web", field);
-										subEntity.setSubID(movie.name);
 										subEntity.set("view", 0);
 									}
 								} catch (e) {
@@ -84,6 +87,16 @@
 	</entityFields>
 	<categories mappingField="category_id">
 		<category id="1">
+		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/12/
+		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/11/
+		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/10/
+		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/9/
+		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/8/
+		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/7/
+		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/6/
+		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/5/
+		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/4/
+		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/3/
 			http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/2/
 			http://phim16.com/xem/tag/phim-bo-hoan-thanh/
 		</category>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<entityConf xsi:noNamespaceSchemaLocation="../../conf/entityconf.xsd"
+<entityConf xsi:noNamespaceSchemaLocation="../../entityconf.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backend="com.ant.crawler.core.ListSiteCrawler">
 
 	<entityFields>

@@ -9,8 +9,12 @@
 		<value>3600000</value>
 	</property>
 	<property>
+		<name>watcher.cycle.millistime</name>
+		<value>3600000</value>
+	</property>
+	<property>
 		<name>crawler.plugin.whitelist</name>
-		<value>phim16_tv</value>
+		<value>9film</value>
 	</property>
 	<property>
 		<name>crawler.plugin.blacklist</name>

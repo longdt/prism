@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
@@ -23,6 +24,7 @@ import com.ant.crawler.core.AbstractCrawler;
 import com.ant.crawler.core.SimpleRssCrawler;
 import com.ant.crawler.core.conf.Configurable;
 import com.ant.crawler.core.conf.Configuration;
+import com.ant.crawler.core.conf.PrismConfiguration;
 import com.ant.crawler.core.conf.entity.EntityConf;
 import com.ant.crawler.core.entity.EntityBuilder;
 import com.ant.crawler.core.entity.EntityBuilderFactory;
@@ -125,6 +127,7 @@ public class WatchService {
 
 		@Override
 		public void run() {
+			int sleepTime = PrismConfiguration.getInstance().getInt(PrismConstants.WATCH_CYCLE_MILLISTIME, 60000);
 			try {
 				loadMetas();
 				Pair<String, EntityBuilder> pair = null;
@@ -134,12 +137,15 @@ public class WatchService {
 						crawler = crawlers.get(pair.getKey());
 						jobs.add(Pair.of(crawler, pair.getValue()));
 					}
-					Thread.sleep(60000);
+					Thread.sleep(sleepTime);
 					EntityBuilder entity = null;
 					
 					Persistencer persistencer = null;
 					String parrentIDField = null;
-					for (Pair<AbstractCrawler, EntityBuilder> job : jobs) {
+					Pair<AbstractCrawler, EntityBuilder> job = null;
+					Iterator<Pair<AbstractCrawler, EntityBuilder>> iter = jobs.iterator();
+					while (iter.hasNext()) {
+						job = iter.next();
 						crawler = job.getKey();
 						entity = job.getValue();
 						parrentIDField = crawler.getConf().get(
@@ -147,6 +153,9 @@ public class WatchService {
 						persistencer = crawler.getPersistencer();
 						if (crawler.crawl(entity.getDetailUrl(), entity)) {
 							updateEntity(persistencer, entity, parrentIDField);
+							if (!entity.isWatch()) {
+								iter.remove();
+							}
 						}
 					}
 				}

@@ -7,6 +7,9 @@
 		</rssSite>
 		<listSite>
 			<itemXpath>//div[@class='box_genre db']/ul[@class='genre_conter db']/li</itemXpath>
+			<field xpath="span[@class='film_quality']/text()" name="filter_quality">
+				<filter type="scriptone"><![CDATA[ if (!field.equals("HD")) field = null;]]></filter>
+			</field>
 			<field xpath="div[@class='poster']/a/@href" name="tempSource">
 				<filter type="scriptone">
 					<![CDATA[
@@ -18,9 +21,6 @@
 			</field>
 		</listSite>
 		<detailSite>
-			<field xpath="//div[@class='info-right f-right']/h3/p[@style='margin-bottom: 7px;']/span[@class='quality']/text()" name="filter_quality">
-				<filter type="scriptone"><![CDATA[ if (!field.equals("HD")) field = null;]]></filter>
-			</field>
 			<field xpath="//div[@class='info-right f-right']/div[@class='poster']/img/@src" name="thumbnail">
 				<filter type="scriptone">
 					<![CDATA[
@@ -43,22 +43,23 @@
 			<expand link="//div[@class='info-right f-right']/span[@class='w-btn']/a[1]">
 				<field xpath="//div[@class='server' and contains(div[@class='label'], 'Picasa')]/ul[@class='episodelist']/li/a[text() = 'Full']" name="filter_source"></field>
 				<field
-				xpath="//div[@id='media']/object/embed/@flashvars" name="embed_web">
+				xpath="//div[@id='media']/script/text()" name="embed_web">
 					<filter type="scriptone">
 						<![CDATA[
-							var index = field.indexOf("proxy.link=");
+							var proxyPrefix= "proxy.link\": \"";
+							var index = field.indexOf(proxyPrefix);
 							if (index == -1) {
 								field = null;
 								return;
 							}
-							index += "proxy.link=".length();
-							var end = field.indexOf('&', index);
+							index += proxyPrefix.length();
+							var end = field.indexOf('"', index);
 							field = field.substring(index, end);
 							java.lang.System.out.println(field);
 							var encoder = java.util.Base64.getUrlEncoder();
 							var IOUtils = Java.type("org.apache.commons.io.IOUtils");
 							var URL = Java.type("java.net.URL");
-							var state = IOUtils.toString(new URL("http://sharephim.vn/get_picasa/0/" + encoder.encodeToString(field.getBytes()).replace('_', '/')));
+							var state = IOUtils.toString(new URL("http://phimdb.net/get_picasa/0/" + encoder.encodeToString(field.getBytes()).replace('_', '/')));
 							if (state.length() < 10) {
 								field = null;
 							}

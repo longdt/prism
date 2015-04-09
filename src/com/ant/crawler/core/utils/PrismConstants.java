@@ -34,6 +34,8 @@ public class PrismConstants {
 	
 	public static final String CRAWL_CYCLE_MILLISTIME = "crawler.cycle.millistime";
 	
+	public static final String WATCH_CYCLE_MILLISTIME = "watcher.cycle.millistime";
+	
 	public static final String CRAWL_PLUGIN_WHITELIST = "crawler.plugin.whitelist";
 	
 	public static final String CRAWL_PLUGIN_BLACKLIST = "crawler.plugin.blacklist";
