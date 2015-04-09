@@ -63,12 +63,27 @@
 							if (movie.name == "Xem Full" || movies.length == 1) {
 								var IOUtils = Java.type("org.apache.commons.io.IOUtils");
 								var URL = Java.type("java.net.URL");
-								var state = IOUtils.toString(new URL("http://sharephim.vn/get_picasa/0/" + movie.link));
+								var state = IOUtils.toString(new URL("http://phimdb.net/get_picasa/0/" + movie.link));
 								java.lang.System.out.println(state);
 								if (state.length() < 10) {
 									field = null;
 								} else {
 									field = new java.lang.String(decoder.decode(movie.link));
+									//subtitle
+									if(!movie.hasOwnProperty('sub')){
+										return;
+									}
+									var Downloader = Java.type("com.ant.crawler.core.download.Downloader");
+									var StringUtils = Java.type("com.ant.crawler.core.utils.StringUtils");
+									var VTTConverter = Java.type("com.solt.vttconverter.VTTConverter");
+									var FileUtils = Java.type("org.apache.commons.io.FileUtils");
+									
+									var subURL = new URL(java.net.URLDecoder.decode(movie.sub, "UTF-8"));
+									var subFile = "subtitles/" + Downloader.getRemoteFilename(subURL) + ".vtt";
+									var subContent = StringUtils.toString(subURL);
+									var vtt = VTTConverter.tryConvert(subContent, false, false);
+									FileUtils.writeStringToFile(new File(subFile), vtt);
+									entity.set("sub_viet_path", subFile);
 								}
 							} else {
 								field = null;

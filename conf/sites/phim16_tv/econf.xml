@@ -45,6 +45,21 @@
 				<filter type="regexone" replace="Hoạt Hình">Phim Hoạt Hình HD</filter>
 				<filter type="regexall" replace=", ">\n</filter>
 			</field>
+			<field xpath="//div[@class='movie-info']/p[@class='on-h']/span[@class='m-gr']/text()" name="tempWatch">
+				<filter type="scriptone"><![CDATA[ 
+					if (!field.startsWith("Tập ")) {
+						field = null;
+						return;
+					}
+					field = field.substring(4);
+					var prog = field.split("/");
+					if (prog.length == 2 && !prog[0].equals(prog[1])) {
+						entity.setWatch(true);
+					} else {
+						entity.setWatch(false);
+					}
+				]]></filter>
+			</field>
 		</detailSite>
 		<subEntity link="//div[@class='movie-info']/div[@class='movie-button clear']/a">
 			<scriptSite xpath="//div[@id='severlist']/script[@type='text/javascript']/text()">
@@ -64,10 +79,10 @@
 								var IOUtils = Java.type("org.apache.commons.io.IOUtils");
 								var URL = Java.type("java.net.URL");
 								try {
-									var state = IOUtils.toString(new URL("http://sharephim.vn/get_picasa/0/" + movie.link));
+									var state = IOUtils.toString(new URL("http://phimdb.net/get_picasa/0/" + movie.link));
 									if (state.length() > 10) {
-										java.lang.System.out.println(state);
 										field = new java.lang.String(decoder.decode(movie.link));
+										java.lang.System.out.println(field);
 										var subEntity = entity.newSubEntity();
 										subEntity.setSubID(movie.name);
 										if (movie.name.length() == 1) {
@@ -76,6 +91,22 @@
 										subEntity.set("title", movie.name);
 										subEntity.set("embed_web", field);
 										subEntity.set("view", 0);
+										//subtitle
+										if(!movie.hasOwnProperty('sub')){
+											continue;
+										}
+										var Downloader = Java.type("com.ant.crawler.core.download.Downloader");
+										var StringUtils = Java.type("com.ant.crawler.core.utils.StringUtils");
+										var VTTConverter = Java.type("com.solt.vttconverter.VTTConverter");
+										var FileUtils = Java.type("org.apache.commons.io.FileUtils");
+										var File = Java.type("java.io.File");
+										
+										var subURL = new URL(java.net.URLDecoder.decode(movie.sub, "UTF-8"));
+										var subFile = "subtitles/" + Downloader.getRemoteFilename(subURL) + ".vtt";
+										var subContent = StringUtils.toString(subURL);
+										var vtt = VTTConverter.tryConvert(subContent, false, false);
+										FileUtils.writeStringToFile(new File(subFile), vtt);
+										subEntity.set("sub_viet_path", subFile);
 									}
 								} catch (e) {
 								}
@@ -87,18 +118,7 @@
 	</entityFields>
 	<categories mappingField="category_id">
 		<category id="1">
-		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/12/
-		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/11/
-		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/10/
-		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/9/
-		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/8/
-		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/7/
-		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/6/
-		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/5/
-		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/4/
-		http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/3/
-			http://phim16.com/xem/tag/phim-bo-hoan-thanh/page/2/
-			http://phim16.com/xem/tag/phim-bo-hoan-thanh/
+			http://phim16.com/xem/tag/phim-bo-moi/
 		</category>
 	</categories>
 </entityConf>
