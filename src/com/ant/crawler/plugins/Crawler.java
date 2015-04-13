@@ -12,7 +12,7 @@ public interface Crawler {
 	
 	public void crawl() throws Exception;
 	
-	public boolean crawl(URL detailURL, EntityBuilder entity);
+	public boolean crawl(URL detailURL, EntityBuilder entity) throws InterruptedException;
 	
 	public void saveState();
 	

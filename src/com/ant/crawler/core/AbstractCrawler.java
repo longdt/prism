@@ -163,7 +163,7 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 	}
 	
 	@Override
-	public boolean crawl(URL detailURL, EntityBuilder entity) {
+	public boolean crawl(URL detailURL, EntityBuilder entity) throws InterruptedException {
 		entity.setSourceUrl(detailURL);
 		HtmlPage htmlDom = pageFetcher.retrieve(detailURL);
 		if (htmlDom == null || !extractor.extract(htmlDom, entity)) {
@@ -171,6 +171,8 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 		}
 		try {
 			doExtThing(entity, htmlDom);
+		} catch (InterruptedException e) {
+			throw e;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
