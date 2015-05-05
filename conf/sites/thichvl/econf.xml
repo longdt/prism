@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entityConf xsi:noNamespaceSchemaLocation="../../entityconf.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backend="com.ant.crawler.core.ListSiteCrawler">
+
+	<entityFields>
+		<rssSite>
+		</rssSite>
+		<listSite>
+			<itemXpath>//ul[@id="entries-content-ul"]/li[@class="gag-link"]</itemXpath>
+			<field xpath="div[1]/div[1]/a/@href" name="tempSource">
+				<filter type="scriptone">
+					<![CDATA[
+						var URL = Java.type("java.net.URL");
+						var url = new URL(entity.getSourceUrl(), field);
+						entity.setDetailUrl(url);
+					]]>
+				</filter>
+			</field>
+			<field xpath="div[1]/div[1]/a/img/@src" name="thumbnail">
+				<filter type="scriptone">
+					<![CDATA[
+						var URL = Java.type("java.net.URL");
+						var url = new URL(entity.getSourceUrl(), field);
+						field= url.toString();
+						var Date = Java.type("java.util.Date");
+						entity.set("create_date", new Date());
+						entity.set("owner_id", "1");
+						entity.set("type", 0);
+						entity.set("view", 10);
+						entity.set("like_count", 0);
+					]]>
+				</filter>
+			</field>
+			<field xpath="div[1]/div[1]/a/img/@alt" name="title">
+				<filter type="scriptone">
+					<![CDATA[ field = field.trim(); ]]>
+				</filter>
+			</field>
+		</listSite>
+		<detailSite>
+			<field xpath="//div[@id='content']/div[1]/div/img/@src" name="content"></field>
+		</detailSite>
+	</entityFields>
+	<categories mappingField="category_id">
+		<category id="1">
+			http://thichvl.net/
+		</category>
+	</categories>
+</entityConf>
