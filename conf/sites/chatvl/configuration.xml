@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+	<property>
+		<name>entity.class</name>
+		<value>dyna#note</value>
+	</property>
+	<property>
+		<name>entity.thumbnail.field</name>
+		<value>thumbnail</value>
+	</property>
+</configuration>
