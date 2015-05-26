@@ -31,7 +31,7 @@
 					]]>
 				</filter>
 			</field>
-			<field xpath="div[1]/div[1]/a/img/@alt" name="title">
+			<field xpath="div[@class='post-info']/div[1]/h1/a/text()" name="title">
 				<filter type="scriptone">
 					<![CDATA[ field = field.trim(); ]]>
 				</filter>
