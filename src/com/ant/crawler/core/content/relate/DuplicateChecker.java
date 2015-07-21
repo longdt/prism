@@ -13,16 +13,16 @@ import java.util.Map.Entry;
 
 public class DuplicateChecker {
 	private String dataFile;
-	private Map<URL, Boolean> urls;
+	private Map<String, Boolean> urls;
 	private int maxUrls;
 	
 	public DuplicateChecker(String pluginDir, int maxUrls) throws IOException {
 		dataFile = pluginDir + "/visited.urls";
 		this.maxUrls = maxUrls;
-		urls = new LinkedHashMap<URL, Boolean>() {
+		urls = new LinkedHashMap<String, Boolean>() {
 			@Override
 			protected boolean removeEldestEntry(
-					java.util.Map.Entry<URL, Boolean> eldest) {
+					java.util.Map.Entry<String, Boolean> eldest) {
 				return size() > DuplicateChecker.this.maxUrls;
 			}
 		};
@@ -35,7 +35,7 @@ public class DuplicateChecker {
 		try (BufferedReader reader = new BufferedReader(new FileReader(dataFile))) {
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				urls.put(new URL(line), Boolean.TRUE);
+				urls.put(line, Boolean.TRUE);
 			}
 		} catch (FileNotFoundException | MalformedURLException e) {
 		}
@@ -44,16 +44,16 @@ public class DuplicateChecker {
 
 
 	public void accept(URL url) {
-		urls.put(url, Boolean.TRUE);
+		urls.put(url.toString(), Boolean.TRUE);
 	}
 
 	public boolean test(URL url) {
-		return maxUrls > 0 && urls.containsKey(url);
+		return maxUrls > 0 && urls.containsKey(url.toString());
 	}
 	
 	public void save() throws IOException {
 		try (PrintWriter writer = new PrintWriter(dataFile)) {
-			for (Entry<URL, Boolean> entry : urls.entrySet()) {
+			for (Entry<String, Boolean> entry : urls.entrySet()) {
 				writer.println(entry.getKey());
 			}
 		}
