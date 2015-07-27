@@ -64,12 +64,16 @@ public class ListSiteCrawler extends AbstractCrawler {
 		return result && noDetailSite;
 	}
 
-	private List<DomNode> retrieveItemList(URL url) {
-		DomNode html = pageFetcher.retrieve(url);
-		if (html != null) {
-			return (List<DomNode>) html.getByXPath(itemXpath);
+	private List<DomNode> retrieveItemList(URL url) throws NoSuchElementException {
+		try {
+			DomNode html = pageFetcher.retrieve(url);
+			if (html != null) {
+				return (List<DomNode>) html.getByXPath(itemXpath);
+			}
+			return null;
+		} catch (RuntimeException e) {
+			throw new NoSuchElementException();
 		}
-		return null;
 	}
 
 }

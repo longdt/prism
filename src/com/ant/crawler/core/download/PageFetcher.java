@@ -140,7 +140,7 @@ public class PageFetcher {
 		try {
 			URL distURL = new URL(origURL, anchor.getHrefAttribute());
 			return client.getPage(distURL);
-		} catch (FailingHttpStatusCodeException | IOException e) {
+		} catch (RuntimeException | IOException e) {
 			e.printStackTrace();
 		}
 		return null;
