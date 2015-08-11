@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entityConf xsi:noNamespaceSchemaLocation="../../entityconf.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backend="com.ant.crawler.core.ListSiteCrawler">
+
+	<entityFields>
+		<rssSite>
+		</rssSite>
+		<listSite>
+			<itemXpath>//li[@class='threadbit hot']</itemXpath>
+			<field xpath="div/div/div[@class='inner']/h3/a/text()" name="title">
+				<filter type="scriptone"><![CDATA[ 
+					if (field.contains("[SD]")) field = null;
+					else {
+						field = field.replaceAll(" \\[.*\\]", "");
+					}
+					]]></filter>
+			</field>
+			<field xpath="div/div/div[@class='inner']/h3/a/@href" name="tempSource">
+				<filter type="scriptone">
+					<![CDATA[
+						var URL = Java.type("java.net.URL");
+						var url = new URL(entity.getSourceUrl(), field);
+						entity.setDetailUrl(url);
+					]]>
+				</filter>
+			</field>
+			<field xpath="div/div/a/img/@src" name="thumbnail">
+				<filter type="scriptone">
+					<![CDATA[
+						var URL = Java.type("java.net.URL");
+						var url = new URL(entity.getSourceUrl(), field);
+						field= url.toString();
+						var Date = Java.type("java.util.Date");
+						entity.set("create_date", new Date());
+						entity.set("owner_email", "tronglongcntt@gmail.com");
+						entity.set("parrent", 0);
+						entity.set("view", 10);
+					]]>
+				</filter>
+			</field>
+		</listSite>
+		<detailSite>
+			<field
+			xpath="//blockquote[@class='postcontent restore ']/font[last()]/span/a[2]/@href" name="embed_web">
+				<filter type="scriptone">
+					<![CDATA[
+					try {
+						java.lang.System.out.println(field);
+						var encoder = java.util.Base64.getUrlEncoder();
+						var IOUtils = Java.type("org.apache.commons.io.IOUtils");
+						var URL = Java.type("java.net.URL");
+						var state = IOUtils.toString(new URL("http://phimdb.net/get_picasa/0/" + encoder.encodeToString(field.getBytes()).replace('_', '/')));
+						if (state.length() < 10) {
+							field = null;
+						}
+					} catch (e) {
+					}
+					]]>
+				</filter>
+			</field>
+			<field xpath="//blockquote[@class='postcontent restore ']/*" name="description" required="false"></field>
+			<field xpath="//blockquote[@class='postcontent restore ']/font[1]/span/text()[1]" name="tags"  required="false">
+				<filter type="regexone" replace="">Thể loại: Phim </filter>
+				<filter type="regexone" replace="Hài hước">Hài</filter>
+				<filter type="regexone" replace="Kinh Dị">Ma</filter>
+				<filter type="regexall" replace=", ">\n</filter>
+			</field>
+		</detailSite>
+	</entityFields>
+	<categories mappingField="category_id">
+		<category id="1">
+			http://sale24h.vn/raovat/forumdisplay.php?f=112
+		</category>
+	</categories>
+</entityConf>
