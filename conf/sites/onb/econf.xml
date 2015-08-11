@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entityConf xsi:noNamespaceSchemaLocation="../../entityconf.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backend="com.ant.crawler.core.ListSiteCrawler">
+
+	<entityFields>
+		<rssSite>
+		</rssSite>
+		<listSite>
+			<itemXpath>//div[@class="box_film"]</itemXpath>
+			<field xpath="div[1]/a/@href" name="tempSource">
+				<filter type="scriptone">
+					<![CDATA[
+						var URL = Java.type("java.net.URL");
+						var url = new URL(entity.getSourceUrl(), field);
+						entity.setDetailUrl(url);
+					]]>
+				</filter>
+			</field>
+			<field xpath="div[1]/a/img/@src" name="thumbnail">
+				<filter type="scriptone">
+					<![CDATA[
+						var URL = Java.type("java.net.URL");
+						var url = new URL(entity.getSourceUrl(), field);
+						field= url.toString();
+						var Date = Java.type("java.util.Date");
+						entity.set("create_date", new Date());
+						entity.set("owner_email", "tronglongcntt@gmail.com");
+						entity.set("parrent", 0);
+						entity.set("view", 10);
+					]]>
+				</filter>
+			</field>
+		</listSite>
+		<detailSite>
+			<field xpath="//table[@class='movie_info']/tbody/tr[1]/td[2]/table/tbody/tr[6]/td[2]/h2/text()" name="filter_movie">
+				<filter type="scriptone">
+					<![CDATA[
+						if (!field.equals("Phim Lẻ")) {
+							field = null;
+						}
+					]]>
+				</filter>
+			</field>
+			<field xpath="//table[@class='movie_info']/tbody/tr[1]/td[2]/table/tbody/tr[1]/td[2]/h1/text()" name="title">
+			</field>
+			<field xpath="//table[@class='movie_info']/tbody/tr[1]/td[2]/table/tbody/tr[4]/td[2]/text()" name="tempTitle">
+				<filter type="scriptone">
+					<![CDATA[
+						field = field.trim();
+						var title = entity.get("title");
+						if (!title.contains(field)) {
+							entity.set("title", title + " " + field);
+						}
+					]]>
+				</filter>
+			</field>
+			<field xpath="//table[@class='movie_info']/tbody/tr[1]/td[2]/table/tbody/tr[7]/td[2]/text()" name="tags"  required="false">
+				<filter type="regexone" replace=", "> - </filter>
+				<filter type="regexall" replace=", ">\n</filter>
+			</field>
+			
+			<field xpath="//html/head/title/text()" name="embed_web">
+				<filter type="scriptone">
+					<![CDATA[
+					try {
+						field = null;
+						//find id
+						var url = entity.getSourceUrl().toString();
+						var index = url.lastIndexOf('_');
+						if (index == -1) {
+							return;
+						}
+						var id = url.substring(index + 1, url.length() - 5);
+						//find server id
+						var IOUtils = Java.type("org.apache.commons.io.IOUtils");
+						var URL = Java.type("java.net.URL");
+						var server = IOUtils.toString(new URL("http://movie.onb.vn/getserver.ashx?id=" + id));
+						server = server.toLowerCase();
+						var indexFull = server.indexOf("full");
+						if (indexFull == -1) {
+							return;
+						}
+						var serverIdStart = server.lastIndexOf("id=\"", indexFull);
+						if (serverIdStart == -1) {
+							return;
+						}
+						serverIdStart += 4;
+						var serverIdEnd = server.indexOf('"', serverIdStart);
+						if (serverIdEnd == -1) {
+							return;
+						}
+						var serverId = server.substring(serverIdStart, serverIdEnd);
+						var getcodeUrl = new URL("http://movie.onb.vn/getlink.ashx?id=" + serverId);
+						var conn = getcodeUrl.openConnection();
+						conn.setRequestMethod("POST");
+						conn.setRequestProperty("Host", "movie.onb.vn");
+						conn.setRequestProperty("Accept", "*/*");
+						conn.setRequestProperty("Referer", "movie.onb.vn");
+						conn.setFixedLengthStreamingMode(0);
+						conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+						conn.setDoOutput(true);
+						var embedCode = IOUtils.toString(conn.getInputStream());
+						var decoder = java.util.Base64.getDecoder();
+						field = new java.lang.String(decoder.decode(embedCode), "UTF-8");
+						//find link
+						var proxyPrefix= "proxy.link=";
+						var index = field.indexOf(proxyPrefix);
+						if (index == -1) {
+							field = null;
+							return;
+						}
+						index += proxyPrefix.length();
+						var end = field.indexOf("&amp;", index);
+						field = field.substring(index, end);
+						java.lang.System.out.println(field);
+						var encoder = java.util.Base64.getUrlEncoder();
+						var state = IOUtils.toString(new URL("http://phimdb.net/get_picasa/0/" + encoder.encodeToString(field.getBytes()).replace('_', '/')));
+						if (state.length() < 10) {
+							field = null;
+						}
+					} catch (e) {
+					}
+					]]>
+				</filter>
+			</field>
+		</detailSite>
+	</entityFields>
+	<categories mappingField="category_id">
+		<category id="1">
+			http://movie.onb.vn/home/movie.aspx
+		</category>
+	</categories>
+</entityConf>
