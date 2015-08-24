@@ -23,10 +23,12 @@
 						var url = new URL(entity.getSourceUrl(), field);
 						field= url.toString();
 						var Date = Java.type("java.util.Date");
-						entity.set("create_date", new Date());
+						var today = new Date();
+						entity.set("create_date", today);
 						entity.set("owner_id", "1");
 						entity.set("type", 2);
-						entity.set("view", 10);
+						var ThreadLocalRandom = Java.type("java.util.concurrent.ThreadLocalRandom");
+						entity.set("view", ThreadLocalRandom.current().nextInt(300, 400));
 						entity.set("like_count", 0);
 					]]>
 				</filter>
@@ -38,16 +40,17 @@
 			</field>
 		</listSite>
 		<detailSite>
-			<field xpath="//div[@id='video-container']/iframe/@src" name="content">
+			<field xpath="//object[@id='flashplayer']/embed/@flashvars" name="content">
 				<filter type="scriptone">
 					<![CDATA[
-					 var index = field.indexOf("//www.youtube.com/embed/");
+					 var prefix = "//www.youtube.com/watch?v=";
+					 var index = field.indexOf(prefix);
 					 if (index == -1) {
 					 	field = null;
 					 	return;
 					 }
-					 index += "//www.youtube.com/embed/".length();
-					 var end = field.indexOf("?", index);
+					 index += prefix.length();
+					 var end = field.indexOf("#", index);
 					 field = end == -1 ? field.substring(index) : field.substring(index, end);
 					  ]]>
 				</filter>
