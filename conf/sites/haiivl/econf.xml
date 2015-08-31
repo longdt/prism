@@ -18,19 +18,22 @@
 						entity.set("create_date", new Date());
 						entity.set("owner_id", "1");
 						entity.set("type", 0);
-						entity.set("view", 10);
+						var ThreadLocalRandom = Java.type("java.util.concurrent.ThreadLocalRandom");
+						entity.set("view", ThreadLocalRandom.current().nextInt(300, 400));
 						entity.set("like_count", 0);
 					]]>
 				</filter>
 			</field>
 			<field xpath="header/h2/a/text()" name="title">
 				<filter type="scriptone">
-					<![CDATA[ field = field.trim(); ]]>
+					<![CDATA[ field = field.trim();
+							field = field.replace("haiivl", "khuckhich");
+					 ]]>
 				</filter>
 			</field>
 		</listSite>
 		<detailSite>
-			<field xpath="//img[@class='badge-item-img']/@ng-src" name="content">
+			<field xpath="//div[@class='content-detail']/a/img/@src" name="content">
 				<filter type="scriptone">
 					<![CDATA[
 						field = field.trim();
