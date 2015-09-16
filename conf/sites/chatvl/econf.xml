@@ -16,12 +16,18 @@
 					]]>
 				</filter>
 			</field>
-			<field xpath="div[1]/div[1]/a/img/@src" name="thumbnail">
+			<field xpath="div[1]/div[1]/a/img[@class='thumb-img']/@src" name="thumbnail" required="false">
 				<filter type="scriptone">
 					<![CDATA[
 						var URL = Java.type("java.net.URL");
 						var url = new URL(entity.getSourceUrl(), field);
 						field= url.toString();
+					]]>
+				</filter>
+			</field>
+			<field xpath="div[@class='post-info']/div[1]/h1/a/text()" name="title">
+				<filter type="scriptone">
+					<![CDATA[ field = field.trim();
 						var Date = Java.type("java.util.Date");
 						var today = new Date();
 						entity.set("create_date", today);
@@ -30,17 +36,12 @@
 						var ThreadLocalRandom = Java.type("java.util.concurrent.ThreadLocalRandom");
 						entity.set("view", ThreadLocalRandom.current().nextInt(300, 400));
 						entity.set("like_count", 0);
-					]]>
-				</filter>
-			</field>
-			<field xpath="div[@class='post-info']/div[1]/h1/a/text()" name="title">
-				<filter type="scriptone">
-					<![CDATA[ field = field.trim(); ]]>
+					 ]]>
 				</filter>
 			</field>
 		</listSite>
 		<detailSite>
-			<field xpath="//object[@id='flashplayer']/embed/@flashvars" name="content">
+			<field xpath="//div[@id='video-container']/script/text()" name="content">
 				<filter type="scriptone">
 					<![CDATA[
 					 var prefix = "//www.youtube.com/watch?v=";
@@ -49,9 +50,11 @@
 					 	field = null;
 					 	return;
 					 }
+					 
 					 index += prefix.length();
-					 var end = field.indexOf("#", index);
-					 field = end == -1 ? field.substring(index) : field.substring(index, end);
+					 var end = field.indexOf("\",", index);
+					 field = end == -1 ? null : field.substring(index, end);
+					 java.lang.System.out.println(field);
 					  ]]>
 				</filter>
 			</field>
