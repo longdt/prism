@@ -7,7 +7,7 @@
 		</rssSite>
 		<listSite>
 			<itemXpath>//*[@id='list-view-2']/div[@id='haivl-list-content']/article</itemXpath>
-			<field xpath="header/h2/a/@href" name="tempSource">
+			<field xpath="header/div[@class='detail-info']/h2/a/@href" name="tempSource">
 				<filter type="scriptone">
 					<![CDATA[
 						var URL = Java.type("java.net.URL");
@@ -16,7 +16,7 @@
 						
 						var Date = Java.type("java.util.Date");
 						entity.set("create_date", new Date());
-						entity.set("owner_id", "1");
+						entity.set("owner_id", "95");
 						entity.set("type", 0);
 						var ThreadLocalRandom = Java.type("java.util.concurrent.ThreadLocalRandom");
 						entity.set("view", ThreadLocalRandom.current().nextInt(300, 400));
@@ -24,7 +24,7 @@
 					]]>
 				</filter>
 			</field>
-			<field xpath="header/h2/a/text()" name="title">
+			<field xpath="header/div[@class='detail-info']/h2/a/text()" name="title">
 				<filter type="scriptone">
 					<![CDATA[ field = field.trim();
 							field = field.replace("haiivl", "khuckhich");
@@ -47,7 +47,7 @@
 	</entityFields>
 	<categories mappingField="category_id">
 		<category id="1">
-			http://haiivl.com/
+			http://haivn.com/
 		</category>
 	</categories>
 </entityConf>
