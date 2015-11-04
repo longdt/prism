@@ -9,6 +9,7 @@ import java.util.Date;
 
 import com.ant.crawler.core.conf.Configuration;
 import com.ant.crawler.core.utils.PrismConstants;
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.CookieManager;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -44,8 +45,9 @@ public class PageFetcher {
 	}
 	
 	public PageFetcher() {
-		client = new WebClient();
+		client = new WebClient(BrowserVersion.CHROME);
 		client.getOptions().setJavaScriptEnabled(false);
+		client.getOptions().setThrowExceptionOnFailingStatusCode(false);
 	}
 
 	public void init(Configuration conf) {

@@ -41,10 +41,10 @@
 			</field>
 		</listSite>
 		<detailSite>
-			<field xpath="//div[@id='video-container']/script/text()" name="content">
+			<field xpath="//div[@id='video-container']/iframe/@src" name="content">
 				<filter type="scriptone">
 					<![CDATA[
-					 var prefix = "//www.youtube.com/watch?v=";
+					 var prefix = "http://chatvl.com/embed/";
 					 var index = field.indexOf(prefix);
 					 if (index == -1) {
 					 	field = null;
@@ -52,8 +52,7 @@
 					 }
 					 
 					 index += prefix.length();
-					 var end = field.indexOf("\",", index);
-					 field = end == -1 ? null : field.substring(index, end);
+					 field = field.substring(index);
 					 java.lang.System.out.println(field);
 					  ]]>
 				</filter>
@@ -62,7 +61,7 @@
 	</entityFields>
 	<categories mappingField="category_id">
 		<category id="1">
-			http://chatvl.com/
+			http://chatvl.info
 		</category>
 	</categories>
 </entityConf>
