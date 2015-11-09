@@ -47,7 +47,8 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 	protected String categoryFieldName;
 	private long sleepMillisTime;
 	private DetailExtractor extractor;
-	private String pluginID;
+	protected String pluginID;
+	protected String pluginDir;
 
 	public AbstractCrawler() {
 		pageFetcher = new PageFetcher();
@@ -56,14 +57,20 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 	@Override
 	public void init(EntityConf entityConf, Wrapper wrapper,
 			Persistencer persistencer) throws Exception {
+		sleepMillisTime = PrismConfiguration.getInstance().getLong(
+				PrismConstants.CRAWL_CYCLE_MILLISTIME, -1);
 		if (conf != null) {
+			sleepMillisTime = conf.getLong(PrismConstants.CRAWL_CYCLE_MILLISTIME, sleepMillisTime);
 			pageFetcher.init(conf);
+		}
+		if (sleepMillisTime < 0) {
+			sleepMillisTime = -1;
 		}
 		pluginID = conf.get(PrismConstants.PLUGIN_ID);
 		this.entityConf = entityConf;
 		extractor = new DetailExtractor(wrapper, conf, entityConf.getEntityFields().getDetailSite());
 		this.persistencer = persistencer;
-		String pluginDir = conf.get(PrismConstants.PLUGIN_DIR);
+		pluginDir = conf.get(PrismConstants.PLUGIN_DIR);
 		int maxUrlCheck = PrismConfiguration.getInstance().getInt(PrismConstants.ENTITY_DUPLICATE_MAXURL, 0);
 		duplicateChecker = new DuplicateChecker(pluginDir, maxUrlCheck);
 		String mapField = entityConf.getCategories().getMappingField();
@@ -84,11 +91,6 @@ public abstract class AbstractCrawler implements Crawler, Configurable {
 			e.printStackTrace();
 		}
 		urlCatsIter = urlCats.entrySet().iterator();
-		sleepMillisTime = PrismConfiguration.getInstance().getLong(
-				PrismConstants.CRAWL_CYCLE_MILLISTIME, -1);
-		if (sleepMillisTime < 0) {
-			sleepMillisTime = -1;
-		}
 		factory = initEntityBuilderFactory();
 	}
 
