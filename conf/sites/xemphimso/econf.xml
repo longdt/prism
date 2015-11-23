@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entityConf xsi:noNamespaceSchemaLocation="../../entityconf.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backend="com.ant.crawler.core.ListSiteCrawler">
+
+	<entityFields>
+		<rssSite>
+		</rssSite>
+		<listSite>
+			<itemXpath>//ul[@class='cfv']/li</itemXpath>
+			<field xpath="a/@href" name="tempSource">
+				<filter type="scriptone">
+					<![CDATA[
+						var URL = Java.type("java.net.URL");
+						var url = new URL(entity.getSourceUrl(), field);
+						entity.setDetailUrl(url);
+					]]>
+				</filter>
+			</field>
+			<field xpath="div/p/span[@class='process']/span/text()" name="filterQuality">
+				<filter type="scriptone">
+					<![CDATA[
+						if (!field.contains("HD")) {
+							field = null;
+						}
+					]]>
+				</filter>
+			</field>
+			<field xpath="div/p[@class='title']/a[@title]/text()" name="title"></field>
+			<field xpath="a/img/@src" name="thumbnail">
+				<filter type="scriptone">
+					<![CDATA[
+						var URL = Java.type("java.net.URL");
+						var url = new URL(entity.getSourceUrl(), field);
+						field= url.toString();
+						var Date = Java.type("java.util.Date");
+						entity.set("create_date", new Date());
+						entity.set("owner_email", "tronglongcntt@gmail.com");
+						entity.set("parrent", 0);
+						entity.set("view", java.util.concurrent.ThreadLocalRandom.current().nextInt(20, 50));
+					]]>
+				</filter>
+			</field>
+		</listSite>
+		<detailSite>
+<!-- 			<field xpath="//div[@class='movie-info']/div[@class='name-info']/h1/text() | //div[@class='movie-info']/div[@class='name-info']/h2/span/text()" name="title">
+				<filter type="regexall" replace=""> \n</filter>
+			</field> 
+			<field xpath="//div[@id='movie_description']/*" name="description" required="false"></field>
+			<field xpath="//p[@class='info_stt']/span[@class='status']/a/text()" name="tags"  required="false">
+				<filter type="regexone" replace="Chiếu Rạp">Xem Phim Chiếu Rạp</filter>
+				<filter type="regexone" replace="">Phim </filter>
+				<filter type="regexall" replace=", ">\n</filter>
+			</field>
+-->
+			<field xpath="//div[@class='movie-info']/div[@class='breadcrumbs fjx-top']/style" name="btnWatch">
+				<filter type="scriptone">
+					<![CDATA[
+						var xemphim = "http://xemphimso.com/xem-phim/online";
+						var index = field.indexOf(xemphim);
+						if (index == -1) {
+							field = null;
+							return;
+						}
+						var end = field.indexOf("\"", index);
+						field = field.substring(index, end);
+						
+						var anchor = node.getHtmlPageOrNull().getFirstByXPath("//div[@class='movie-info']/div[@class='breadcrumbs fjx-top']/div[@class='item']/a");
+						anchor.setAttribute("href", field);
+					]]>
+				</filter>
+			</field>
+			<expand link="//div[@class='movie-info']/div[@class='breadcrumbs fjx-top']/div[@class='item']/a">
+				<field xpath="//tr[td/div[@class='listserver']/span/text() = 'Server Khác :']/td[@class='listep']/a/@href" name="embed_web">
+					<filter type="scriptone">
+						<![CDATA[
+						try {
+							var IOUtils = Java.type("org.apache.commons.io.IOUtils");
+							var URL = Java.type("java.net.URL");
+							var pageContent = IOUtils.toString(new URL(field), "UTF-8");
+							//find proxy link
+							var proxyPrefix= "http://xemphimso.com/grab/vplugin2/stream2.php?file=";
+							var index = pageContent.indexOf(proxyPrefix);
+							if (index == -1) {
+								field = null;
+								return;
+							}
+							var end = pageContent.indexOf("&", index);
+							field = pageContent.substring(index, end);
+							java.lang.System.out.println("proxy link: " + field);
+							
+							//get google drive link
+							pageContent = IOUtils.toString(new URL(field), "UTF-8");
+							var prefixLink = "https://drive.google.com/file/d";
+							index = pageContent.indexOf(prefixLink);
+							if (index == -1) {
+								field = null;
+								return;
+							}
+							end = pageContent.indexOf("\"", index);
+							field = pageContent.substring(index, end);
+							var encoder = java.util.Base64.getUrlEncoder();
+
+							var state = IOUtils.toString(new URL("http://phimdb.net/get_picasa/0/" + encoder.encodeToString(field.getBytes()).replace('_', '/')));
+							java.lang.System.out.println(state);
+							if (state.length() < 10) {
+								field = null;
+							}
+							field = "<iframe src='" + field + "' width='868' height='480' frameborder='0' allowfullscreen></iframe>";
+						} catch (e) {
+							//e.printStackTrace();
+							field = null;
+						}
+						]]>
+					</filter>
+				</field>
+			</expand>
+		</detailSite>
+	</entityFields>
+	<categories mappingField="category_id">
+		<category id="1">
+			http://xemphimso.com/danh-sach/phim-le/page-30.html
+http://xemphimso.com/danh-sach/phim-le/page-29.html
+http://xemphimso.com/danh-sach/phim-le/page-28.html
+http://xemphimso.com/danh-sach/phim-le/page-27.html
+http://xemphimso.com/danh-sach/phim-le/page-26.html
+http://xemphimso.com/danh-sach/phim-le/page-25.html
+http://xemphimso.com/danh-sach/phim-le/page-24.html
+http://xemphimso.com/danh-sach/phim-le/page-23.html
+http://xemphimso.com/danh-sach/phim-le/page-22.html
+http://xemphimso.com/danh-sach/phim-le/page-21.html
+http://xemphimso.com/danh-sach/phim-le/page-20.html
+http://xemphimso.com/danh-sach/phim-le/page-19.html
+http://xemphimso.com/danh-sach/phim-le/page-18.html
+http://xemphimso.com/danh-sach/phim-le/page-17.html
+http://xemphimso.com/danh-sach/phim-le/page-16.html
+http://xemphimso.com/danh-sach/phim-le/page-15.html
+http://xemphimso.com/danh-sach/phim-le/page-14.html
+http://xemphimso.com/danh-sach/phim-le/page-13.html
+http://xemphimso.com/danh-sach/phim-le/page-12.html
+http://xemphimso.com/danh-sach/phim-le/page-11.html
+http://xemphimso.com/danh-sach/phim-le/page-10.html
+http://xemphimso.com/danh-sach/phim-le/page-9.html
+http://xemphimso.com/danh-sach/phim-le/page-8.html
+http://xemphimso.com/danh-sach/phim-le/page-7.html
+http://xemphimso.com/danh-sach/phim-le/page-6.html
+http://xemphimso.com/danh-sach/phim-le/page-5.html
+http://xemphimso.com/danh-sach/phim-le/page-4.html
+http://xemphimso.com/danh-sach/phim-le/page-3.html
+http://xemphimso.com/danh-sach/phim-le/page-2.html
+http://xemphimso.com/danh-sach/phim-le/page-1.html
+		</category>
+	</categories>
+</entityConf>
