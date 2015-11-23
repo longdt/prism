@@ -137,7 +137,7 @@ public class PageFetcher {
 	}
 	
 	public HtmlPage navigate(HtmlPage page, String xpath) {
-		HtmlAnchor anchor = (HtmlAnchor) page.getFirstByXPath(xpath);
+		HtmlAnchor anchor = page.<HtmlAnchor>getFirstByXPath(xpath);
 		URL origURL = page.getUrl();
 		try {
 			URL distURL = new URL(origURL, anchor.getHrefAttribute());
