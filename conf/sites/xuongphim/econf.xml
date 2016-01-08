@@ -49,19 +49,26 @@
 				<filter type="regexone" replace="Tình Cảm">Tâm Lý Tình Cảm</filter>
 				<filter type="regexall" replace=", ">\n</filter>
 			</field>
-			<field xpath="//iframe/@src[contains(., 'drive.google.com')]" name="embed_web">
+			<field xpath="//div[@id='viewplayer']/following-sibling::script[1]/text()" name="embed_web">
 				<filter type="scriptone">
 					<![CDATA[
 					try {
-						var encoder = java.util.Base64.getUrlEncoder();
-						var IOUtils = Java.type("org.apache.commons.io.IOUtils");
-						var URL = Java.type("java.net.URL");
-						var state = IOUtils.toString(new URL("http://phimdb.net/get_picasa/0/" + encoder.encodeToString(field.getBytes()).replace('_', '/')));
-						java.lang.System.out.println(state);
-						if (state.length() < 10) {
-							field = null;
+						var prefix = "{file: \"";
+						var index = 0; 
+						var setup = field;
+						field = null;
+						while ((index = setup.indexOf(prefix, index)) >= 0) {
+							index += prefix.length();
+							var end = setup.indexOf("\"", index);
+							if (end == -1) {
+								return;
+							}
+							var movie = setup.substring(index, end);
+							java.lang.System.out.println(movie);
+							if (movie.endsWith("=m22")) {
+								field = "direct*" + movie;
+							}
 						}
-						field = "<iframe src='" + field + "' width='868' height='480' frameborder='0' allowfullscreen></iframe>";
 					} catch (e) {
 						//e.printStackTrace();
 						field = null;
