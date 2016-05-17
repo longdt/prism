@@ -26,13 +26,13 @@
 						entity.set("create_date", new Date());
 						entity.set("owner_email", "tronglongcntt@gmail.com");
 						entity.set("parrent", 0);
-						entity.set("view", java.util.concurrent.ThreadLocalRandom.current().nextInt(40, 60));
+						entity.set("view", java.util.concurrent.ThreadLocalRandom.current().nextInt(10, 30));
 					]]>
 				</filter>
 			</field>
 		</listSite>
 		<detailSite>
-			<field xpath="//table[@class='movie_info']/tbody/tr[1]/td[2]/table/tbody/tr[6]/td[2]/h2/text()" name="filter_movie">
+			<field xpath="//div[@class='movie_info_right']/table/tbody/tr[contains(., 'Thể Loại')]/td[2]/h2/text()" name="filter_movie">
 				<filter type="scriptone">
 					<![CDATA[
 						if (!field.equals("Phim Lẻ")) {
@@ -41,9 +41,9 @@
 					]]>
 				</filter>
 			</field>
-			<field xpath="//table[@class='movie_info']/tbody/tr[1]/td[2]/table/tbody/tr[1]/td[2]/h1/text()" name="title">
+			<field xpath="//h1[@class='tenphim']/text()" name="title">
 			</field>
-			<field xpath="//table[@class='movie_info']/tbody/tr[1]/td[2]/table/tbody/tr[4]/td[2]/text()" name="tempTitle">
+			<field xpath="//div[@class='movie_info_right']/table/tbody/tr[contains(., 'Năm Phát Hành')]/td[2]/text()" name="tempTitle">
 				<filter type="scriptone">
 					<![CDATA[
 						field = field.trim();
@@ -54,7 +54,7 @@
 					]]>
 				</filter>
 			</field>
-			<field xpath="//table[@class='movie_info']/tbody/tr[1]/td[2]/table/tbody/tr[7]/td[2]/text()" name="tags"  required="false">
+			<field xpath="//div[@class='movie_info_right']/table/tbody/tr[contains(., 'Nhóm Phim')]/td[2]/text()" name="tags"  required="false">
 				<filter type="regexone" replace=", "> - </filter>
 				<filter type="regexall" replace=", ">\n</filter>
 			</field>
@@ -71,11 +71,13 @@
 							return;
 						}
 						var id = url.substring(index + 1, url.length() - 5);
+						
 						//find server id
 						var IOUtils = Java.type("org.apache.commons.io.IOUtils");
 						var URL = Java.type("java.net.URL");
 						var server = IOUtils.toString(new URL("http://movie.onb.vn/getserver.ashx?id=" + id));
 						server = server.toLowerCase();
+						java.lang.System.out.println(server);
 						var indexFull = server.indexOf("full");
 						if (indexFull == -1) {
 							return;
@@ -90,35 +92,10 @@
 							return;
 						}
 						var serverId = server.substring(serverIdStart, serverIdEnd);
-						var getcodeUrl = new URL("http://movie.onb.vn/getlink.ashx?id=" + serverId);
-						var conn = getcodeUrl.openConnection();
-						conn.setRequestMethod("POST");
-						conn.setRequestProperty("Host", "movie.onb.vn");
-						conn.setRequestProperty("Accept", "*/*");
-						conn.setRequestProperty("Referer", "movie.onb.vn");
-						conn.setFixedLengthStreamingMode(0);
-						conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-						conn.setDoOutput(true);
-						var embedCode = IOUtils.toString(conn.getInputStream());
-						var decoder = java.util.Base64.getDecoder();
-						field = new java.lang.String(decoder.decode(embedCode), "UTF-8");
-						//find link
-						var proxyPrefix= "proxy.link=";
-						var index = field.indexOf(proxyPrefix);
-						if (index == -1) {
-							field = null;
-							return;
-						}
-						index += proxyPrefix.length();
-						var end = field.indexOf("&amp;", index);
-						field = field.substring(index, end);
+						field = "http://www.phimrap24h.com/getlink.ashx?id=" + serverId;
 						java.lang.System.out.println(field);
-						var encoder = java.util.Base64.getUrlEncoder();
-						var state = IOUtils.toString(new URL("http://phimdb.net/get_picasa/0/" + encoder.encodeToString(field.getBytes()).replace('_', '/')));
-						if (state.length() < 10) {
-							field = null;
-						}
 					} catch (e) {
+						field = null;
 					}
 					]]>
 				</filter>
@@ -127,7 +104,9 @@
 	</entityFields>
 	<categories mappingField="category_id">
 		<category id="1">
-			http://movie.onb.vn/home/movie.aspx
+		<![CDATA[
+		http://www.phimrap24h.com/home/movie.aspx
+			]]>
 		</category>
 	</categories>
 </entityConf>
